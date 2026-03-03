@@ -56,7 +56,7 @@ export async function dashboardRoutes(app: FastifyInstance) {
       })
     ]);
 
-    const goalProgress = goals.map((goal) => {
+    const goalProgress = goals.map((goal: any) => {
       const total = goal.checkins.length;
       const progress = goal.targetValue > 0 ? Math.min(100, (total / goal.targetValue) * 100) : 0;
       return {
@@ -70,7 +70,7 @@ export async function dashboardRoutes(app: FastifyInstance) {
 
     const avgGoalProgress =
       goalProgress.length > 0
-        ? Number((goalProgress.reduce((sum, g) => sum + g.progress, 0) / goalProgress.length).toFixed(2))
+        ? Number((goalProgress.reduce((sum: number, g: any) => sum + g.progress, 0) / goalProgress.length).toFixed(2))
         : 0;
 
     const periods: Array<"weekly" | "monthly" | "quarterly"> = ["weekly", "monthly", "quarterly"];
@@ -78,18 +78,18 @@ export async function dashboardRoutes(app: FastifyInstance) {
       (acc, period) => {
         const bounds = periodBounds(period);
         const items = allTasks
-          .filter((task) => {
+          .filter((task: any) => {
             const pivot = taskPivotDate(task);
             return pivot >= bounds.start && pivot <= bounds.end;
           })
-          .map((task) => ({
+          .map((task: any) => ({
             taskId: task.id,
             title: task.title,
             status: task.status,
             priority: task.priority,
             dueAt: task.dueAt
           }));
-        const completedCount = items.filter((item) => item.status === "completed").length;
+        const completedCount = items.filter((item: any) => item.status === "completed").length;
         const completion = items.length > 0 ? Number(((completedCount / items.length) * 100).toFixed(2)) : 0;
 
         acc[period] = {
@@ -119,8 +119,8 @@ export async function dashboardRoutes(app: FastifyInstance) {
 
     const byPeriod = periods.reduce(
       (acc, period) => {
-        const periodGoals = allGoals.filter((g) => g.periodType === period);
-        const items = periodGoals.map((goal) => {
+        const periodGoals = allGoals.filter((g: any) => g.periodType === period);
+        const items = periodGoals.map((goal: any) => {
           const completedCount = goal.checkins.length;
           const progress = goal.targetValue > 0 ? Math.min(100, (completedCount / goal.targetValue) * 100) : 0;
           return {
@@ -133,7 +133,7 @@ export async function dashboardRoutes(app: FastifyInstance) {
           };
         });
         const averageProgress =
-          items.length > 0 ? Number((items.reduce((sum, item) => sum + item.progress, 0) / items.length).toFixed(2)) : 0;
+          items.length > 0 ? Number((items.reduce((sum: number, item: any) => sum + item.progress, 0) / items.length).toFixed(2)) : 0;
 
         acc[period] = {
           count: items.length,

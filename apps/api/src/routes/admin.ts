@@ -56,7 +56,7 @@ export async function adminRoutes(app: FastifyInstance) {
     const passwordHash = await bcrypt.hash(payload.password, 10);
     const roleIds = await upsertRoleIds(payload.roles);
 
-    const created = await prisma.$transaction(async (tx) => {
+    const created = await prisma.$transaction(async (tx: any) => {
       const user = await tx.user.create({
         data: {
           email: normalizedEmail,
@@ -68,7 +68,7 @@ export async function adminRoutes(app: FastifyInstance) {
 
       if (roleIds.length > 0) {
         await tx.userRole.createMany({
-          data: roleIds.map((roleId) => ({ userId: user.id, roleId }))
+          data: roleIds.map((roleId: string) => ({ userId: user.id, roleId }))
         });
       }
 
@@ -89,7 +89,7 @@ export async function adminRoutes(app: FastifyInstance) {
       isMasterOwner: created.isMasterOwner,
       active: created.active,
       timezone: created.timezone,
-      roles: created.roles.map((r) => r.role.name)
+      roles: created.roles.map((r: any) => r.role.name)
     };
   });
 
@@ -103,14 +103,14 @@ export async function adminRoutes(app: FastifyInstance) {
       orderBy: { createdAt: "asc" }
     });
 
-    return users.map((user) => ({
+    return users.map((user: any) => ({
       id: user.id,
       email: user.email,
       displayName: user.displayName,
       isMasterOwner: user.isMasterOwner,
       active: user.active,
       timezone: user.timezone,
-      roles: user.roles.map((r) => r.role.name)
+      roles: user.roles.map((r: any) => r.role.name)
     }));
   });
 
@@ -132,11 +132,11 @@ export async function adminRoutes(app: FastifyInstance) {
 
     const roleIds = await upsertRoleIds(payload.roles);
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       await tx.userRole.deleteMany({ where: { userId: params.id } });
       if (roleIds.length > 0) {
         await tx.userRole.createMany({
-          data: roleIds.map((roleId) => ({ userId: params.id, roleId }))
+          data: roleIds.map((roleId: string) => ({ userId: params.id, roleId }))
         });
       }
     });
@@ -196,7 +196,7 @@ export async function adminRoutes(app: FastifyInstance) {
       return reply.code(400).send({ message: "Master owner cannot be removed" });
     }
 
-    const isOwner = user.roles.some((r) => r.role.name === "owner");
+    const isOwner = user.roles.some((r: any) => r.role.name === "owner");
     if (isOwner) {
       const remainingOwnerCount = await prisma.userRole.count({
         where: {

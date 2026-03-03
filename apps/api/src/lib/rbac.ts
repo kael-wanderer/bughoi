@@ -8,7 +8,7 @@ export async function getUserRoles(request: FastifyRequest): Promise<string[]> {
     where: { userId },
     include: { role: true }
   });
-  return roles.map((r) => r.role.name);
+  return roles.map((r: any) => r.role.name);
 }
 
 export async function requireAdmin(request: FastifyRequest, reply: FastifyReply): Promise<boolean> {

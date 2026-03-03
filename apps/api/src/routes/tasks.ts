@@ -67,7 +67,7 @@ export async function taskRoutes(app: FastifyInstance) {
         orderBy: { dueAt: "asc" }
       });
 
-      return overdue.map((task) => ({ ...task, status: "overdue" }));
+      return overdue.map((task: any) => ({ ...task, status: "overdue" }));
     }
 
     return prisma.task.findMany({
@@ -88,7 +88,7 @@ export async function taskRoutes(app: FastifyInstance) {
     const userId = getAuthUser(request).userId;
     const payload = createTaskSchema.parse(request.body);
 
-    return prisma.$transaction(async (tx) => {
+    return prisma.$transaction(async (tx: any) => {
       const dueAt = payload.dueAt ? new Date(payload.dueAt) : null;
       const parentTask = await tx.task.create({
         data: {

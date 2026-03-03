@@ -51,8 +51,8 @@ export async function profileRoutes(app: FastifyInstance) {
       theme: user.theme,
       twoFactorEnabled: user.twoFactorEnabled,
       active: user.active,
-      roles: user.roles.map((r) => r.role.name),
-      channels: user.channels.map((c) => ({
+      roles: user.roles.map((r: any) => r.role.name),
+      channels: user.channels.map((c: any) => ({
         id: c.id,
         type: c.type,
         enabled: c.enabled,
@@ -93,7 +93,7 @@ export async function profileRoutes(app: FastifyInstance) {
       return reply.code(404).send({ message: "User not found" });
     }
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       for (const channel of payload.channels) {
         const existing = await tx.notificationChannel.findFirst({
           where: { userId, type: channel.type }
@@ -122,7 +122,7 @@ export async function profileRoutes(app: FastifyInstance) {
 
     const channels = await prisma.notificationChannel.findMany({ where: { userId }, orderBy: { createdAt: "asc" } });
     return {
-      channels: channels.map((c) => ({
+      channels: channels.map((c: any) => ({
         id: c.id,
         type: c.type,
         enabled: c.enabled,

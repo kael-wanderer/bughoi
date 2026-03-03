@@ -16,7 +16,7 @@ export async function ensureOwnerFromEnv(log: FastifyBaseLogger) {
   const email = env.ownerEmail.toLowerCase();
   const passwordHash = await bcrypt.hash(env.ownerPassword, 10);
 
-  const user = await prisma.$transaction(async (tx) => {
+  const user = await prisma.$transaction(async (tx: any) => {
     const ownerRole = await tx.role.upsert({
       where: { name: "owner" },
       update: {},
