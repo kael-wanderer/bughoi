@@ -1,0 +1,243 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Admin Panel - Role Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Public Sans', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-nav {
+            background-color: #ec5b13;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="flex min-h-screen">
+<!-- Sidebar -->
+<aside class="hidden lg:flex w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark flex-col fixed h-full z-40">
+<div class="p-6">
+<div class="flex items-center gap-3 mb-8">
+<div class="size-10 rounded-full bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="">shield_person</span>
+</div>
+<div class="flex flex-col">
+<h1 class="text-slate-900 dark:text-white text-base font-bold leading-tight" style="">Admin Console</h1>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium" style="">Enterprise Suite</p>
+</div>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#" style="">
+<span class="material-symbols-outlined text-[22px]" style="">group</span>
+<span class="text-sm font-semibold" style="">Users</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg active-nav shadow-md shadow-primary/20 transition-colors" href="#" style="">
+<span class="material-symbols-outlined text-[22px]" style="">verified_user</span>
+<span class="text-sm font-semibold" style="">Roles</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#" style="">
+<span class="material-symbols-outlined text-[22px]" style="">settings</span>
+<span class="text-sm font-semibold" style="">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#" style="">
+<span class="material-symbols-outlined text-[22px]" style="">analytics</span>
+<span class="text-sm font-semibold" style="">Logs</span>
+</a>
+</nav>
+</div>
+<div class="mt-auto p-6 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Profile picture of the current admin user" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWU0FCsKUmA3wRVHAM3Lv8h2JKvBJRTnEZjoLKXCzF-n1bgWNfbvJF7scYu1ai1wRu8-nmL-plFUo2mO-R5hbpHMZCiCSM3yXEHDTTVozZ-WTWkXmf2hpNfkaORLlw-c-orSwhBd1P1_1B1o1y0WaUR-9kQrefKRmj2Sx_bD92YcwX_Z54al9MKGAU6RA1Uf753UaMNIE_OHjmjtVvEUEyzMz4Z4QWW4fex4oMP-T5zKzQ_JwEmeFrpm-KRi86pmfFsPciu5kPYhoN" style="">
+</div>
+<div class="flex flex-col">
+<p class="text-sm font-bold truncate" style="">Alex Morgan</p>
+<p class="text-xs text-slate-500" style="">Super Admin</p>
+</div>
+</div>
+</div>
+</aside>
+<nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-6 py-3 flex justify-between items-center z-50">
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#" style="">
+<span class="material-symbols-outlined" style="">group</span>
+<span class="text-[10px] font-bold" style="">Users</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#" style="">
+<span class="material-symbols-outlined" style="">verified_user</span>
+<span class="text-[10px] font-bold" style="">Admin</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#" style="">
+<span class="material-symbols-outlined" style="">settings</span>
+<span class="text-[10px] font-bold" style="">Settings</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#" style="">
+<span class="material-symbols-outlined" style="">analytics</span>
+<span class="text-[10px] font-bold" style="">Logs</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#" style="">
+<div class="size-6 rounded-full overflow-hidden border border-slate-200">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWU0FCsKUmA3wRVHAM3Lv8h2JKvBJRTnEZjoLKXCzF-n1bgWNfbvJF7scYu1ai1wRu8-nmL-plFUo2mO-R5hbpHMZCiCSM3yXEHDTTVozZ-WTWkXmf2hpNfkaORLlw-c-orSwhBd1P1_1B1o1y0WaUR-9kQrefKRmj2Sx_bD92YcwX_Z54al9MKGAU6RA1Uf753UaMNIE_OHjmjtVvEUEyzMz4Z4QWW4fex4oMP-T5zKzQ_JwEmeFrpm-KRi86pmfFsPciu5kPYhoN" style="">
+</div>
+<span class="text-[10px] font-bold" style="">Me</span>
+</a>
+</nav>
+<!-- Main Content -->
+<main class="flex-1 lg:ml-64 p-5 lg:p-12 pb-24 lg:pb-12">
+<div class="max-w-6xl mx-auto">
+<!-- Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+<div>
+<h2 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white" style="">Access Management</h2>
+<p class="mt-1 text-slate-500 dark:text-slate-400" style="">Define system access levels and manage granular permissions for your team.</p>
+</div>
+<button class="inline-flex items-center justify-center gap-2 px-6 py-4 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/30 hover:bg-primary/90 transition-all active:scale-95 w-full md:w-auto" style="">
+<span class="material-symbols-outlined text-[20px]" style="">add</span>
+<span class="" style="">Add New Role</span>
+</button>
+</div>
+<!-- Stats/Brief Overview -->
+<!-- Roles Table Container -->
+<div class="space-y-6 mb-10">
+<div class="flex items-center justify-between">
+<h3 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight" style="">User List</h3>
+<span class="text-xs font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded" style="">185 Total</span>
+</div>
+<div class="grid grid-cols-1 gap-4">
+<!-- User Card 1 -->
+<div class="bg-white dark:bg-slate-900/50 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-500">
+<span class="material-symbols-outlined" style="">person</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white" style="">Alex Morgan</h4>
+<p class="text-xs text-slate-500" style="">alex.m@enterprise.com</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer" style="">
+<input checked="" class="sr-only peer" type="checkbox" value="">
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+<span class="ml-2 text-xs font-bold text-slate-500 uppercase" style="">Admin</span>
+</label>
+</div>
+<div class="grid grid-cols-2 gap-3 mt-4">
+<button class="flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold hover:bg-slate-200 transition-colors" style="">
+<span class="material-symbols-outlined text-sm" style="">lock_reset</span>
+                    Set Password
+                </button>
+<button class="flex items-center justify-center gap-2 px-4 py-2.5 bg-green-500/10 text-green-600 rounded-xl text-xs font-bold hover:bg-green-500/20 transition-colors" style="">
+<span class="material-symbols-outlined text-sm" style="">check_circle</span>
+                    Active
+                </button>
+</div>
+</div>
+<!-- User Card 2 -->
+<div class="bg-white dark:bg-slate-900/50 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-500">
+<span class="material-symbols-outlined" style="">person</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white" style="">Sarah Jenkins</h4>
+<p class="text-xs text-slate-500" style="">s.jenkins@enterprise.com</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer" style="">
+<input class="sr-only peer" type="checkbox" value="">
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+<span class="ml-2 text-xs font-bold text-slate-500 uppercase" style="">Admin</span>
+</label>
+</div>
+<div class="grid grid-cols-2 gap-3 mt-4">
+<button class="flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold hover:bg-slate-200 transition-colors" style="">
+<span class="material-symbols-outlined text-sm" style="">lock_reset</span>
+                    Set Password
+                </button>
+<button class="flex items-center justify-center gap-2 px-4 py-2.5 bg-red-500/10 text-red-600 rounded-xl text-xs font-bold hover:bg-red-500/20 transition-colors" style="">
+<span class="material-symbols-outlined text-sm" style="">block</span>
+                    Deactivated
+                </button>
+</div>
+</div>
+<!-- User Card 3 -->
+<div class="bg-white dark:bg-slate-900/50 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-500">
+<span class="material-symbols-outlined" style="">person</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white" style="">Marcus Thorne</h4>
+<p class="text-xs text-slate-500" style="">m.thorne@enterprise.com</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer" style="">
+<input class="sr-only peer" type="checkbox" value="">
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+<span class="ml-2 text-xs font-bold text-slate-500 uppercase" style="">Admin</span>
+</label>
+</div>
+<div class="grid grid-cols-2 gap-3 mt-4">
+<button class="flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold hover:bg-slate-200 transition-colors" style="">
+<span class="material-symbols-outlined text-sm" style="">lock_reset</span>
+                    Set Password
+                </button>
+<button class="flex items-center justify-center gap-2 px-4 py-2.5 bg-green-500/10 text-green-600 rounded-xl text-xs font-bold hover:bg-green-500/20 transition-colors" style="">
+<span class="material-symbols-outlined text-sm" style="">check_circle</span>
+                    Active
+                </button>
+</div>
+</div>
+</div>
+<!-- Pagination for User List -->
+<div class="flex items-center justify-center gap-2 pt-4">
+<button class="size-10 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-400" style=""><span class="material-symbols-outlined" style="">chevron_left</span></button>
+<button class="size-10 rounded-xl bg-primary text-white font-bold" style="">1</button>
+<button class="size-10 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 font-bold" style="">2</button>
+<button class="size-10 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-400" style=""><span class="material-symbols-outlined" style="">chevron_right</span></button>
+</div>
+</div>
+<!-- Help/Documentation Alert -->
+<div class="mt-8 p-5 rounded-2xl bg-primary/5 border border-primary/20 flex flex-col sm:flex-row items-start gap-3">
+<div class="text-primary mt-1">
+<span class="material-symbols-outlined" style="">info</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white" style="">Managing Permissions</h4>
+<p class="text-sm text-slate-600 dark:text-slate-400 mt-1 leading-relaxed" style="">
+                            Looking to create custom permission sets? You can duplicate an existing role to use it as a template. Changes to role permissions are applied immediately to all assigned users.
+                            <a class="text-primary font-bold hover:underline ml-1" href="#" style="">View Documentation</a>
+</p>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

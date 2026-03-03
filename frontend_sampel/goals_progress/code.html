@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Goals Tracker</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Public Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<!-- Header -->
+<header class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-primary/10">
+<div class="flex items-center p-4 justify-between max-w-md mx-auto">
+<div class="text-slate-600 dark:text-slate-400 flex size-10 items-center justify-center">
+<span class="material-symbols-outlined">menu</span>
+</div>
+<h1 class="text-lg font-bold leading-tight tracking-tight flex-1 text-center font-display">My Goals</h1>
+<div class="flex w-10 items-center justify-end">
+<button class="flex items-center justify-center rounded-full size-10 bg-primary/10 text-primary">
+<span class="material-symbols-outlined filled-icon">person</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-md mx-auto pb-32">
+<!-- View Type Switcher -->
+<div class="px-4 py-6">
+<div class="flex h-12 items-center justify-center rounded-xl bg-slate-200/50 dark:bg-primary/5 p-1">
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-primary has-[:checked]:shadow-sm has-[:checked]:text-primary dark:has-[:checked]:text-white text-slate-500 dark:text-slate-400 text-sm font-semibold transition-all">
+<span class="truncate">Weekly</span>
+<input checked="" class="hidden" name="view-type" type="radio" value="Weekly"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-primary has-[:checked]:shadow-sm has-[:checked]:text-primary dark:has-[:checked]:text-white text-slate-500 dark:text-slate-400 text-sm font-semibold transition-all">
+<span class="truncate">Monthly</span>
+<input class="hidden" name="view-type" type="radio" value="Monthly"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-primary has-[:checked]:shadow-sm has-[:checked]:text-primary dark:has-[:checked]:text-white text-slate-500 dark:text-slate-400 text-sm font-semibold transition-all">
+<span class="truncate">Quarterly</span>
+<input class="hidden" name="view-type" type="radio" value="Quarterly"/>
+</label>
+</div>
+</div>
+<!-- Goals List -->
+<section class="px-4 space-y-4">
+<div class="flex items-center justify-between mb-2">
+<h2 class="text-xl font-bold font-display">Weekly Progress</h2>
+<span class="text-primary text-sm font-bold">Add New</span>
+</div>
+<!-- Goal Item 1 -->
+<div class="p-4 rounded-xl bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-primary/10 shadow-sm">
+<div class="flex items-start gap-4">
+<div class="size-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">fitness_center</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-bold text-slate-900 dark:text-slate-100">Gym Sessions</h3>
+<span class="text-xs font-bold text-slate-400">50%</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-3">1 of 2 completed</p>
+<div class="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 50%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Goal Item 2 -->
+<div class="p-4 rounded-xl bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-primary/10 shadow-sm">
+<div class="flex items-start gap-4">
+<div class="size-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+<span class="material-symbols-outlined">menu_book</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-bold text-slate-900 dark:text-slate-100">Reading Time</h3>
+<span class="text-xs font-bold text-slate-400">75%</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-3">3 of 4 hours completed</p>
+<div class="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+<div class="bg-blue-500 h-full rounded-full" style="width: 75%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Goal Item 3 -->
+<div class="p-4 rounded-xl bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-primary/10 shadow-sm opacity-60">
+<div class="flex items-start gap-4">
+<div class="size-12 rounded-xl bg-green-500/10 flex items-center justify-center text-green-500">
+<span class="material-symbols-outlined">eco</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-bold text-slate-900 dark:text-slate-100">Healthy Meals</h3>
+<span class="text-xs font-bold text-slate-400">100%</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-3">21 of 21 completed</p>
+<div class="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+<div class="bg-green-500 h-full rounded-full" style="width: 100%"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Check-in Form -->
+<section class="mt-8 px-4">
+<h2 class="text-xl font-bold font-display mb-4">Quick Check-in</h2>
+<div class="bg-white dark:bg-slate-800/60 p-5 rounded-2xl border border-slate-200 dark:border-primary/10 shadow-sm">
+<form class="space-y-4">
+<div>
+<label class="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Select Goal</label>
+<select class="w-full rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary">
+<option>Gym Sessions</option>
+<option>Reading Time</option>
+<option>Healthy Meals</option>
+</select>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Date</label>
+<input class="w-full rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary" type="date" value="2023-10-27"/>
+</div>
+<div>
+<label class="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Duration (min)</label>
+<input class="w-full rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary" placeholder="60" type="number"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Notes</label>
+<textarea class="w-full rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary" placeholder="How was your session?" rows="3"></textarea>
+</div>
+<button class="w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:brightness-110 active:scale-[0.98] transition-all" type="button">
+                        Log Activity
+                    </button>
+</form>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 z-20 bg-white/90 dark:bg-background-dark/95 backdrop-blur-lg border-t border-slate-200 dark:border-primary/10 max-w-md mx-auto">
+<div class="flex justify-around items-center h-20 px-2">
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined filled-icon">track_changes</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Goals</span>
+</a>
+<div class="relative -top-6">
+<button class="flex items-center justify-center size-14 rounded-full bg-primary text-white shadow-xl shadow-primary/40 border-4 border-background-light dark:border-background-dark">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Stats</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Settings</span>
+</a>
+</div>
+</nav>
+</body></html>

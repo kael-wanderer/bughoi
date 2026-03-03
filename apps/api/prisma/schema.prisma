@@ -1,0 +1,190 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum GoalPeriod {
+  weekly
+  monthly
+  quarterly
+}
+
+enum TaskStatus {
+  active
+  completed
+  overdue
+}
+
+enum TaskPriority {
+  low
+  medium
+  high
+}
+
+enum ReminderStatus {
+  pending
+  sent
+  failed
+}
+
+enum ReminderChannel {
+  email
+  telegram
+  webpush
+}
+
+model User {
+  id             String   @id @default(uuid())
+  email          String   @unique
+  passwordHash   String
+  displayName    String
+  isMasterOwner  Boolean  @default(false)
+  twoFactorEnabled Boolean @default(false)
+  twoFactorSecret String?
+  twoFactorTempSecret String?
+  timezone       String   @default("UTC")
+  theme          String   @default("system")
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  roles          UserRole[]
+  goals          Goal[]
+  tasks          Task[]
+  channels       NotificationChannel[]
+  events         ActivityEvent[]
+}
+
+model Role {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  users     UserRole[]
+}
+
+model UserRole {
+  userId    String
+  roleId    String
+
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+}
+
+model Goal {
+  id          String      @id @default(uuid())
+  userId       String
+  title        String
+  category     String
+  periodType   GoalPeriod
+  periodStart  DateTime
+  periodEnd    DateTime
+  targetValue  Float
+  unit         String
+  status       String      @default("active")
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  checkins     GoalCheckin[]
+  tasks        Task[]
+
+  @@index([userId, periodType, periodStart, periodEnd])
+}
+
+model GoalCheckin {
+  id          String   @id @default(uuid())
+  goalId       String
+  checkinDate  DateTime @default(now())
+  value        Float
+  durationMins Float?
+  note         String?
+  createdAt    DateTime @default(now())
+
+  goal         Goal     @relation(fields: [goalId], references: [id], onDelete: Cascade)
+}
+
+model Task {
+  id           String       @id @default(uuid())
+  userId        String
+  goalId        String?
+  parentTaskId  String?
+  title         String
+  category      String       @default("Once Time")
+  description   String?
+  dueAt         DateTime?
+  reminderPreset String?
+  customReminderAt DateTime?
+  repeatRule    String?
+  repeatCustom  String?
+  repeatEndType String       @default("never")
+  repeatEndDate DateTime?
+  tags          String[]     @default([])
+  notificationChannel String @default("all")
+  priority      TaskPriority @default(medium)
+  status        TaskStatus   @default(active)
+  completedAt   DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goal          Goal?        @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  parentTask    Task?        @relation("TaskSubtasks", fields: [parentTaskId], references: [id], onDelete: Cascade)
+  subtasks      Task[]       @relation("TaskSubtasks")
+  reminders     TaskReminder[]
+
+  @@index([userId, status, dueAt])
+  @@index([parentTaskId])
+}
+
+model TaskReminder {
+  id            String         @id @default(uuid())
+  taskId         String
+  remindAt       DateTime
+  channel        ReminderChannel
+  status         ReminderStatus @default(pending)
+  sentAt         DateTime?
+  createdAt      DateTime       @default(now())
+
+  task           Task           @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([remindAt, status])
+}
+
+model NotificationChannel {
+  id            String   @id @default(uuid())
+  userId         String
+  type           String
+  configJson     Json
+  enabled        Boolean  @default(true)
+  createdAt      DateTime @default(now())
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ActivityEvent {
+  id            String   @id @default(uuid())
+  userId         String
+  entityType     String
+  entityId       String
+  action         String
+  metadataJson   Json?
+  createdAt      DateTime @default(now())
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ApiClient {
+  id            String   @id @default(uuid())
+  name          String
+  tokenHash     String
+  scopes        String
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+}

@@ -1,0 +1,211 @@
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Public Sans', sans-serif; }
+        .chart-bar { transition: height 0.3s ease; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Header -->
+<header class="flex items-center bg-background-light dark:bg-background-dark p-4 sticky top-0 z-10 border-b border-primary/10">
+<div class="text-slate-900 dark:text-slate-100 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</div>
+<h1 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight flex-1 text-center">Analytics</h1>
+<div class="flex size-10 items-center justify-end">
+<button class="flex items-center justify-center rounded-full size-10 hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-slate-900 dark:text-slate-100">notifications</span>
+</button>
+</div>
+</header>
+<!-- Time Range Selector -->
+<div class="flex px-4 py-4">
+<div class="flex h-12 flex-1 items-center justify-center rounded-xl bg-primary/5 dark:bg-primary/10 p-1.5 border border-primary/10">
+<label class="flex cursor-pointer h-full grow items-center justify-center rounded-lg px-2 has-[:checked]:bg-primary has-[:checked]:text-white text-slate-600 dark:text-slate-400 text-sm font-semibold transition-all">
+<span>Week</span>
+<input class="hidden" name="timeframe" type="radio" value="Week"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center rounded-lg px-2 has-[:checked]:bg-primary has-[:checked]:text-white text-slate-600 dark:text-slate-400 text-sm font-semibold transition-all">
+<span>Month</span>
+<input checked="" class="hidden" name="timeframe" type="radio" value="Month"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center rounded-lg px-2 has-[:checked]:bg-primary has-[:checked]:text-white text-slate-600 dark:text-slate-400 text-sm font-semibold transition-all">
+<span>Quarter</span>
+<input class="hidden" name="timeframe" type="radio" value="Quarter"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center rounded-lg px-2 has-[:checked]:bg-primary has-[:checked]:text-white text-slate-600 dark:text-slate-400 text-sm font-semibold transition-all">
+<span>Year</span>
+<input class="hidden" name="timeframe" type="radio" value="Year"/>
+</label>
+</div>
+</div>
+<!-- High-Level Stats -->
+<div class="flex flex-wrap gap-4 px-4 pb-6">
+<div class="flex min-w-[150px] flex-1 flex-col gap-2 rounded-xl p-5 border border-primary/10 bg-white dark:bg-slate-900/50 shadow-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">check_circle</span>
+<p class="text-slate-600 dark:text-slate-400 text-sm font-medium">Tasks Done</p>
+</div>
+<div class="flex items-baseline gap-2">
+<p class="text-slate-900 dark:text-slate-100 text-2xl font-bold">128</p>
+<p class="text-emerald-500 text-xs font-bold">+12%</p>
+</div>
+</div>
+<div class="flex min-w-[150px] flex-1 flex-col gap-2 rounded-xl p-5 border border-primary/10 bg-white dark:bg-slate-900/50 shadow-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">flag</span>
+<p class="text-slate-600 dark:text-slate-400 text-sm font-medium">Goal Status</p>
+</div>
+<div class="flex items-baseline gap-2">
+<p class="text-slate-900 dark:text-slate-100 text-2xl font-bold">84%</p>
+<p class="text-rose-500 text-xs font-bold">-3%</p>
+</div>
+</div>
+</div>
+<!-- Performance Overview Chart Area -->
+<div class="px-4 pb-6">
+<div class="rounded-xl border border-primary/10 bg-white dark:bg-slate-900/50 p-5 shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold">Performance Overview</h2>
+<span class="material-symbols-outlined text-slate-400 cursor-pointer">more_horiz</span>
+</div>
+<!-- Mock Chart -->
+<div class="flex items-end justify-between h-48 w-full gap-2 px-2">
+<div class="flex flex-col items-center gap-2 w-full">
+<div class="w-full bg-primary/20 rounded-t-lg h-[40%]"></div>
+<span class="text-[10px] text-slate-400 font-medium uppercase">Mon</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-full">
+<div class="w-full bg-primary/20 rounded-t-lg h-[65%]"></div>
+<span class="text-[10px] text-slate-400 font-medium uppercase">Tue</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-full">
+<div class="w-full bg-primary rounded-t-lg h-[90%]"></div>
+<span class="text-[10px] text-slate-400 font-medium uppercase">Wed</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-full">
+<div class="w-full bg-primary/20 rounded-t-lg h-[55%]"></div>
+<span class="text-[10px] text-slate-400 font-medium uppercase">Thu</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-full">
+<div class="w-full bg-primary/20 rounded-t-lg h-[75%]"></div>
+<span class="text-[10px] text-slate-400 font-medium uppercase">Fri</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-full">
+<div class="w-full bg-primary/20 rounded-t-lg h-[30%]"></div>
+<span class="text-[10px] text-slate-400 font-medium uppercase">Sat</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-full">
+<div class="w-full bg-primary/20 rounded-t-lg h-[45%]"></div>
+<span class="text-[10px] text-slate-400 font-medium uppercase">Sun</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Goals Progress List -->
+<div class="px-4 pb-20">
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold mb-4">Goal Breakdown</h2>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-slate-900/50 border border-primary/10">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">fitness_center</span>
+</div>
+<div>
+<p class="font-bold text-sm">Health &amp; Fitness</p>
+<p class="text-xs text-slate-500">Daily routine</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-sm">92%</p>
+<div class="w-20 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full mt-1 overflow-hidden">
+<div class="h-full bg-primary" style="width: 92%"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-slate-900/50 border border-primary/10">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-blue-500">work</span>
+</div>
+<div>
+<p class="font-bold text-sm">Productivity</p>
+<p class="text-xs text-slate-500">Deep work blocks</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-sm">65%</p>
+<div class="w-20 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full mt-1 overflow-hidden">
+<div class="h-full bg-blue-500" style="width: 65%"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-slate-900/50 border border-primary/10">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-emerald-500">savings</span>
+</div>
+<div>
+<p class="font-bold text-sm">Savings Goal</p>
+<p class="text-xs text-slate-500">Budgeting</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-sm">48%</p>
+<div class="w-20 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full mt-1 overflow-hidden">
+<div class="h-full bg-emerald-500" style="width: 48%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 left-0 right-0 z-20 flex gap-2 border-t border-primary/10 bg-white dark:bg-background-dark px-4 pb-6 pt-3 shadow-lg">
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined text-[24px]">dashboard</span>
+<p class="text-[10px] font-semibold">Dashboard</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined text-[24px] font-fill">leaderboard</span>
+<p class="text-[10px] font-semibold">Analytics</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined text-[24px]">track_changes</span>
+<p class="text-[10px] font-semibold">Goals</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined text-[24px]">person</span>
+<p class="text-[10px] font-semibold">Profile</p>
+</a>
+</nav>
+</div>
+</body></html>
