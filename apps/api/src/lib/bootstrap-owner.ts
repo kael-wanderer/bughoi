@@ -34,14 +34,20 @@ export async function ensureOwnerFromEnv(log: FastifyBaseLogger) {
         displayName: env.ownerDisplayName,
         passwordHash,
         active: true,
-        isMasterOwner: true
+        isMasterOwner: true,
+        twoFactorEnabled: false,
+        twoFactorSecret: null,
+        twoFactorTempSecret: null
       },
       create: {
         email,
         displayName: env.ownerDisplayName,
         passwordHash,
         active: true,
-        isMasterOwner: true
+        isMasterOwner: true,
+        twoFactorEnabled: false,
+        twoFactorSecret: null,
+        twoFactorTempSecret: null
       }
     });
 
