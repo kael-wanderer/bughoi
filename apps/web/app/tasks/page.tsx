@@ -380,348 +380,279 @@ export default function TasksPage() {
   return (
     <main>
       <Header title="Tasks" />
-      <div className="space-y-4 px-4 py-4 pb-28">
-        {error === "not-auth" ? (
-          <MobileCard>
-            <p className="text-sm">You need to sign in first.</p>
-            <Link className="mt-2 inline-block text-sm font-semibold text-primary" href="/login">
-              Open Login
-            </Link>
-          </MobileCard>
-        ) : null}
+      <div className="space-y-4 px-4 py-4 pb-28 md:grid md:grid-cols-12 md:gap-8 md:space-y-0 md:px-8 md:py-8 md:pb-8">
+        <div className="md:col-span-7 lg:col-span-8 space-y-4">
+          {error === "not-auth" ? (
+            <MobileCard>
+              <p className="text-sm">You need to sign in first.</p>
+              <Link className="mt-2 inline-block text-sm font-semibold text-primary" href="/login">
+                Open Login
+              </Link>
+            </MobileCard>
+          ) : null}
 
-        <div className="grid grid-cols-4 gap-2 rounded-xl bg-white p-1 text-xs font-semibold">
-          <button className={`rounded-lg py-2 ${status === "all" ? "bg-primary text-white" : "text-slate-500"}`} onClick={() => setStatus("all")} type="button">All</button>
-          <button className={`rounded-lg py-2 ${status === "active" ? "bg-primary text-white" : "text-slate-500"}`} onClick={() => setStatus("active")} type="button">Active</button>
-          <button className={`rounded-lg py-2 ${status === "completed" ? "bg-primary text-white" : "text-slate-500"}`} onClick={() => setStatus("completed")} type="button">Done</button>
-          <button className={`rounded-lg py-2 ${status === "overdue" ? "bg-primary text-white" : "text-slate-500"}`} onClick={() => setStatus("overdue")} type="button">Overdue</button>
-        </div>
-
-        <input className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm" disabled={busy} onChange={(e) => setQuery(e.target.value)} placeholder="Search tasks" type="search" value={query} />
-        <div className="grid grid-cols-2 gap-2">
-          <select
-            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm"
-            disabled={busy}
-            onChange={(e) => setSortBy(e.target.value as "deadline" | "name")}
-            value={sortBy}
-          >
-            <option value="deadline">Sort by deadline</option>
-            <option value="name">Sort by name</option>
-          </select>
-          <select
-            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm"
-            disabled={busy}
-            onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}
-            value={sortOrder}
-          >
-            <option value="asc">ASC</option>
-            <option value="desc">DESC</option>
-          </select>
-        </div>
-
-        {loading ? <p className="text-sm text-slate-500">Loading tasks...</p> : null}
-        {success ? <p className="text-sm text-emerald-600">{success}</p> : null}
-        {error && error !== "not-auth" ? <p className="text-sm text-red-600">{error}</p> : null}
-        {!loading && filtered.length === 0 ? <p className="text-sm text-slate-500">No tasks in this list.</p> : null}
-
-        {pagedTasks.map((task) => (
-          <MobileCard key={task.id}>
-            <div className={selectedTaskId === task.id ? "rounded-md border border-primary p-2" : ""}>
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="font-semibold">{task.title}</p>
-                <p className="text-xs text-slate-500">
-                  {task.category} | {task.dueAt ? new Date(task.dueAt).toLocaleString() : "No date"}
-                </p>
-                <p className="mt-1 text-[11px] text-slate-500">
-                  Repeat: {task.repeatRule || "none"} | Notify: {task.notificationChannel}
-                </p>
-                {task.tags?.length ? <p className="mt-1 text-[11px] text-slate-500">Tags: {task.tags.join(", ")}</p> : null}
-                {task.subtasks?.length ? <p className="mt-1 text-[11px] text-slate-500">Subtasks: {task.subtasks.length}</p> : null}
-              </div>
-              <div className="flex flex-col items-end gap-2">
-                <span className="rounded-full bg-primary/10 px-2 py-1 text-[10px] font-bold uppercase text-primary">{task.priority}</span>
-                {task.status !== "completed" ? (
-                  <button className="text-xs font-semibold text-primary disabled:opacity-60" disabled={busy} onClick={() => markComplete(task.id)} type="button">
-                    Mark Done
-                  </button>
-                ) : null}
-              </div>
-            </div>
-
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              <button className="rounded-lg border border-slate-300 py-2 text-xs font-semibold disabled:opacity-60" disabled={busy} onClick={() => beginTaskEdit(task)} type="button">Edit Task</button>
-              <button className="rounded-lg border border-rose-300 py-2 text-xs font-semibold text-rose-600 disabled:opacity-60" disabled={busy} onClick={() => deleteTask(task.id)} type="button">Delete Task</button>
-            </div>
-            </div>
-          </MobileCard>
-        ))}
-
-        {filtered.length > pageSize ? (
-          <div className="flex items-center justify-center gap-2">
-            <button
-              className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs disabled:opacity-50"
-              disabled={safePage <= 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              type="button"
-            >
-              Prev
-            </button>
-            {Array.from({ length: totalPages }).map((_, i) => {
-              const value = i + 1;
-              return (
-                <button
-                  key={value}
-                  className={`rounded-lg px-3 py-1.5 text-xs ${safePage === value ? "bg-primary text-white" : "border border-slate-200 bg-white"}`}
-                  onClick={() => setPage(value)}
-                  type="button"
-                >
-                  {value}
-                </button>
-              );
-            })}
-            <button
-              className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs disabled:opacity-50"
-              disabled={safePage >= totalPages}
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              type="button"
-            >
-              Next
-            </button>
+          <div className="grid grid-cols-4 gap-2 rounded-xl bg-white p-1 text-xs font-semibold shadow-sm border border-slate-100">
+            <button className={`rounded-lg py-2 transition-colors ${status === "all" ? "bg-primary text-white" : "text-slate-500 hover:bg-slate-50"}`} onClick={() => setStatus("all")} type="button">All</button>
+            <button className={`rounded-lg py-2 transition-colors ${status === "active" ? "bg-primary text-white" : "text-slate-500 hover:bg-slate-50"}`} onClick={() => setStatus("active")} type="button">Active</button>
+            <button className={`rounded-lg py-2 transition-colors ${status === "completed" ? "bg-primary text-white" : "text-slate-500 hover:bg-slate-50"}`} onClick={() => setStatus("completed")} type="button">Done</button>
+            <button className={`rounded-lg py-2 transition-colors ${status === "overdue" ? "bg-primary text-white" : "text-slate-500 hover:bg-slate-50"}`} onClick={() => setStatus("overdue")} type="button">Overdue</button>
           </div>
-        ) : null}
 
-        <div>
-          <MobileCard>
-            <div className="mb-3 flex items-center justify-between">
-              <p className="text-sm font-semibold">{editingTaskId ? "Edit Task" : "Quick Add"}</p>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <input className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm" disabled={busy} onChange={(e) => setQuery(e.target.value)} placeholder="Search tasks" type="search" value={query} />
+            <div className="grid grid-cols-2 gap-2 sm:w-80">
+              <select
+                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm shadow-sm"
+                disabled={busy}
+                onChange={(e) => setSortBy(e.target.value as "deadline" | "name")}
+                value={sortBy}
+              >
+                <option value="deadline">Deadline</option>
+                <option value="name">Name</option>
+              </select>
+              <select
+                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm shadow-sm"
+                disabled={busy}
+                onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}
+                value={sortOrder}
+              >
+                <option value="asc">ASC</option>
+                <option value="desc">DESC</option>
+              </select>
+            </div>
+          </div>
+
+          {loading ? <p className="text-sm text-slate-500">Loading tasks...</p> : null}
+          {success ? <p className="text-sm text-emerald-600">{success}</p> : null}
+          {error && error !== "not-auth" ? <p className="text-sm text-red-600">{error}</p> : null}
+          {!loading && filtered.length === 0 ? <p className="text-sm text-slate-500">No tasks in this list.</p> : null}
+
+          <div className="space-y-4">
+            {pagedTasks.map((task) => (
+              <MobileCard key={task.id}>
+                <div className={selectedTaskId === task.id ? "rounded-md border border-primary p-2" : ""}>
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="font-semibold text-slate-800">{task.title}</p>
+                      <p className="text-xs text-slate-500">
+                        {task.category} | {task.dueAt ? new Date(task.dueAt).toLocaleString() : "No date"}
+                      </p>
+                      <p className="mt-1 text-[11px] text-slate-500">
+                        Repeat: {task.repeatRule || "none"} | Notify: {task.notificationChannel}
+                      </p>
+                      {task.tags?.length ? (
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {task.tags.map(tag => (
+                            <span key={tag} className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-[10px]">{tag}</span>
+                          ))}
+                        </div>
+                      ) : null}
+                      {task.subtasks?.length ? <p className="mt-1 text-[11px] text-slate-500">Subtasks: {task.subtasks.length}</p> : null}
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                      <span className="rounded-full bg-primary/10 px-2 py-1 text-[10px] font-bold uppercase text-primary">{task.priority}</span>
+                      {task.status !== "completed" ? (
+                        <button className="text-xs font-semibold text-primary disabled:opacity-60" disabled={busy} onClick={() => markComplete(task.id)} type="button">
+                          Mark Done
+                        </button>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  <div className="mt-4 grid grid-cols-2 gap-2">
+                    <button className="rounded-lg border border-slate-300 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-60" disabled={busy} onClick={() => beginTaskEdit(task)} type="button">Edit Task</button>
+                    <button className="rounded-lg border border-rose-200 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 disabled:opacity-60" disabled={busy} onClick={() => deleteTask(task.id)} type="button">Delete Task</button>
+                  </div>
+                </div>
+              </MobileCard>
+            ))}
+          </div>
+
+          {filtered.length > pageSize ? (
+            <div className="flex items-center justify-center gap-2 pt-4">
               <button
-                className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-primary"
-                onClick={() => setFormExpanded((v) => !v)}
+                className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs disabled:opacity-50"
+                disabled={safePage <= 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
                 type="button"
               >
-                {formExpanded ? "Collapse" : "Create Task"}
+                Prev
+              </button>
+              {Array.from({ length: totalPages }).map((_, i) => {
+                const value = i + 1;
+                return (
+                  <button
+                    key={value}
+                    className={`rounded-lg px-3 py-1.5 text-xs ${safePage === value ? "bg-primary text-white" : "border border-slate-200 bg-white"}`}
+                    onClick={() => setPage(value)}
+                    type="button"
+                  >
+                    {value}
+                  </button>
+                );
+              })}
+              <button
+                className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs disabled:opacity-50"
+                disabled={safePage >= totalPages}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                type="button"
+              >
+                Next
               </button>
             </div>
+          ) : null}
+        </div>
 
-            {formExpanded ? <form className="space-y-3" onSubmit={createTask}>
-
-              <div>
-                <FieldLabel>Task Name</FieldLabel>
-                <input className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" onChange={(e) => setTitle(e.target.value)} placeholder="Task name" disabled={busy} value={title} />
-              </div>
-              {titleError ? <p className="text-xs text-rose-600">{titleError}</p> : null}
-
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <FieldLabel>Deadline</FieldLabel>
-                  <input className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" onChange={(e) => setDueAt(e.target.value)} type="datetime-local" disabled={busy} value={dueAt} />
-                </div>
-                <div>
-                  <FieldLabel>Priority</FieldLabel>
-                  <select className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" disabled={busy} onChange={(e) => setPriority(e.target.value as "low" | "medium" | "high")} value={priority}>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                  </select>
-                </div>
+        <div className="md:col-span-5 lg:col-span-4">
+          <div className="sticky top-8">
+            <MobileCard>
+              <div className="mb-4 flex items-center justify-between">
+                <p className="text-lg font-bold">{editingTaskId ? "Edit Task" : "Create Task"}</p>
+                <button
+                  className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-primary md:hidden"
+                  onClick={() => setFormExpanded((v) => !v)}
+                  type="button"
+                >
+                  {formExpanded ? "Collapse" : "Expand"}
+                </button>
               </div>
 
-              <div>
-                <FieldLabel>Category</FieldLabel>
-                <select className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" disabled={busy} onChange={(e) => setCategory(e.target.value as (typeof categoryOptions)[number])} value={category}>
-                  {categoryOptions.map((opt) => (
-                    <option key={opt} value={opt}>{opt}</option>
-                  ))}
-                </select>
-              </div>
+              <div className={`space-y-3 ${!formExpanded ? "hidden md:block" : "block"}`}>
+                <form className="space-y-4" onSubmit={createTask}>
+                  <div>
+                    <FieldLabel>Task Name</FieldLabel>
+                    <input className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" onChange={(e) => setTitle(e.target.value)} placeholder="Task name" disabled={busy} value={title} />
+                    {titleError ? <p className="mt-1 text-xs text-rose-600">{titleError}</p> : null}
+                  </div>
 
-              <div>
-                <FieldLabel>Description</FieldLabel>
-                <textarea className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" disabled={busy} onChange={(e) => setDescription(e.target.value)} placeholder="Description" rows={3} value={description} />
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <FieldLabel>Reminder</FieldLabel>
-                  <select className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" disabled={busy} onChange={(e) => setReminderPreset(e.target.value)} value={reminderPreset}>
-                    {reminderOptions.map((opt) => (
-                      <option key={opt.value} value={opt.value}>{opt.label}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <FieldLabel>Custom Reminder Time</FieldLabel>
-                  {reminderPreset === "custom" ? (
-                    <input className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" type="datetime-local" disabled={busy} onChange={(e) => setCustomReminderAt(e.target.value)} value={customReminderAt} />
-                  ) : (
-                    <input className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" disabled placeholder="Reminder auto from due date" />
-                  )}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <FieldLabel>Repeat</FieldLabel>
-                  <select className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" disabled={busy} onChange={(e) => setRepeatRule(e.target.value)} value={repeatRule}>
-                    {repeatOptions.map((opt) => (
-                      <option key={opt.value} value={opt.value}>{opt.label}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <FieldLabel>{repeatRule === "custom" ? "Custom Repeat" : "End Repeat"}</FieldLabel>
-                  {repeatRule === "custom" ? (
-                    <input className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" disabled={busy} onChange={(e) => setRepeatCustom(e.target.value)} placeholder="Custom repeat rule" value={repeatCustom} />
-                  ) : (
-                    <select className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" disabled={busy} onChange={(e) => setRepeatEndType(e.target.value as "never" | "on_date")} value={repeatEndType}>
-                      <option value="never">Never</option>
-                      <option value="on_date">On date</option>
-                    </select>
-                  )}
-                </div>
-              </div>
-
-              {repeatRule !== "custom" && repeatEndType === "on_date" ? (
-                <div>
-                  <FieldLabel>Repeat End Date</FieldLabel>
-                  <input className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" type="date" disabled={busy} onChange={(e) => setRepeatEndDate(e.target.value)} value={repeatEndDate} />
-                </div>
-              ) : null}
-
-              <div>
-                <FieldLabel>Tags</FieldLabel>
-                <input className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" disabled={busy} onChange={(e) => setTagsInput(e.target.value)} placeholder="Comma separated tags" value={tagsInput} />
-              </div>
-
-              <div>
-                <FieldLabel>Notification</FieldLabel>
-                <select className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" disabled={busy} onChange={(e) => setNotificationChannel(e.target.value as "off" | "email" | "telegram" | "all")} value={notificationChannel}>
-                  <option value="off">Off</option>
-                  <option value="email">Email</option>
-                  <option value="telegram">Telegram</option>
-                  <option value="all">All</option>
-                </select>
-              </div>
-
-              <div className="space-y-2 rounded-lg border border-slate-200 p-3">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs font-semibold">Subtasks</p>
-                  <button className="text-xs font-semibold text-primary" disabled={busy} onClick={addSubtask} type="button">+ Add Subtask</button>
-                </div>
-
-                {subtasks.map((st, index) => (
-                  <div className="space-y-2 rounded-md border border-slate-200 p-2" key={index}>
-                    <FieldLabel>Subtask Name</FieldLabel>
-                    <input className="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs" disabled={busy} onChange={(e) => updateSubtask(index, { title: e.target.value })} placeholder="Subtask name" value={st.title} />
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <FieldLabel>Deadline</FieldLabel>
-                        <input className="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs" type="datetime-local" disabled={busy} onChange={(e) => updateSubtask(index, { dueAt: e.target.value })} value={st.dueAt} />
-                      </div>
-                      <div>
-                        <FieldLabel>Priority</FieldLabel>
-                        <select className="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs" disabled={busy} onChange={(e) => updateSubtask(index, { priority: e.target.value as "low" | "medium" | "high" })} value={st.priority}>
-                          <option value="low">Low</option>
-                          <option value="medium">Medium</option>
-                          <option value="high">High</option>
-                        </select>
-                      </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <FieldLabel>Deadline</FieldLabel>
+                      <input className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none" onChange={(e) => setDueAt(e.target.value)} type="datetime-local" disabled={busy} value={dueAt} />
                     </div>
+                    <div>
+                      <FieldLabel>Priority</FieldLabel>
+                      <select className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none" disabled={busy} onChange={(e) => setPriority(e.target.value as "low" | "medium" | "high")} value={priority}>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
                     <FieldLabel>Category</FieldLabel>
-                    <select className="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs" disabled={busy} onChange={(e) => updateSubtask(index, { category: e.target.value as SubtaskDraft["category"] })} value={st.category}>
+                    <select className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none" disabled={busy} onChange={(e) => setCategory(e.target.value as (typeof categoryOptions)[number])} value={category}>
                       {categoryOptions.map((opt) => (
                         <option key={opt} value={opt}>{opt}</option>
                       ))}
                     </select>
+                  </div>
+
+                  <div>
                     <FieldLabel>Description</FieldLabel>
-                    <textarea className="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs" rows={2} disabled={busy} onChange={(e) => updateSubtask(index, { description: e.target.value })} placeholder="Description" value={st.description} />
-                    <FieldLabel>Tags</FieldLabel>
-                    <input className="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs" disabled={busy} onChange={(e) => updateSubtask(index, { tagsInput: e.target.value })} placeholder="Comma separated tags" value={st.tagsInput} />
-                    <div className="grid grid-cols-2 gap-2">
-                      <select className="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs" disabled={busy} onChange={(e) => updateSubtask(index, { reminderPreset: e.target.value })} value={st.reminderPreset}>
+                    <textarea className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none" disabled={busy} onChange={(e) => setDescription(e.target.value)} placeholder="Task details..." rows={3} value={description} />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <FieldLabel>Reminder</FieldLabel>
+                      <select className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none" disabled={busy} onChange={(e) => setReminderPreset(e.target.value)} value={reminderPreset}>
                         {reminderOptions.map((opt) => (
                           <option key={opt.value} value={opt.value}>{opt.label}</option>
                         ))}
                       </select>
-                      {st.reminderPreset === "custom" ? (
-                        <input
-                          className="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs"
-                          type="datetime-local"
-                          disabled={busy}
-                          onChange={(e) => updateSubtask(index, { customReminderAt: e.target.value })}
-                          value={st.customReminderAt}
-                        />
+                    </div>
+                    <div>
+                      <FieldLabel>Custom Note</FieldLabel>
+                      {reminderPreset === "custom" ? (
+                        <input className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none" type="datetime-local" disabled={busy} onChange={(e) => setCustomReminderAt(e.target.value)} value={customReminderAt} />
                       ) : (
-                        <input className="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs" disabled placeholder="Reminder from due date" />
+                        <div className="rounded-lg bg-slate-50 px-3 py-2 text-[11px] text-slate-500 border border-slate-100">Auto from due date</div>
                       )}
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <select
-                        className="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs"
-                        disabled={busy}
-                        onChange={(e) => updateSubtask(index, { repeatRule: e.target.value })}
-                        value={st.repeatRule}
-                      >
+                  </div>
+
+                  <div>
+                    <FieldLabel>Tags (Comma separated)</FieldLabel>
+                    <input className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none" disabled={busy} onChange={(e) => setTagsInput(e.target.value)} placeholder="e.g. work, health" value={tagsInput} />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <FieldLabel>Repeat</FieldLabel>
+                      <select className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none" disabled={busy} onChange={(e) => setRepeatRule(e.target.value)} value={repeatRule}>
                         {repeatOptions.map((opt) => (
                           <option key={opt.value} value={opt.value}>{opt.label}</option>
                         ))}
                       </select>
-                      <select
-                        className="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs"
-                        disabled={busy}
-                        onChange={(e) => updateSubtask(index, { repeatEndType: e.target.value as "never" | "on_date" })}
-                        value={st.repeatEndType}
-                      >
-                        <option value="never">End: Never</option>
-                        <option value="on_date">End: On date</option>
-                      </select>
                     </div>
-                    {st.repeatRule === "custom" ? (
-                      <input
-                        className="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs"
-                        disabled={busy}
-                        onChange={(e) => updateSubtask(index, { repeatCustom: e.target.value })}
-                        placeholder="Custom repeat rule"
-                        value={st.repeatCustom}
-                      />
-                    ) : null}
-                    {st.repeatEndType === "on_date" ? (
-                      <input
-                        className="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs"
-                        type="date"
-                        disabled={busy}
-                        onChange={(e) => updateSubtask(index, { repeatEndDate: e.target.value })}
-                        value={st.repeatEndDate}
-                      />
-                    ) : null}
                     <div>
-                      <select className="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs" disabled={busy} onChange={(e) => updateSubtask(index, { notificationChannel: e.target.value as "off" | "email" | "telegram" | "all" })} value={st.notificationChannel}>
-                        <option value="off">Off</option>
-                        <option value="email">Email</option>
-                        <option value="telegram">Telegram</option>
-                        <option value="all">All</option>
+                      <FieldLabel>Repeat End</FieldLabel>
+                      <select className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none" disabled={busy} onChange={(e) => setRepeatEndType(e.target.value as "never" | "on_date")} value={repeatEndType}>
+                        <option value="never">Never</option>
+                        <option value="on_date">On date</option>
                       </select>
                     </div>
-                    <button className="w-full rounded-md border border-rose-300 py-1 text-[11px] text-rose-600" disabled={busy} onClick={() => removeSubtask(index)} type="button">Remove Subtask</button>
                   </div>
-                ))}
-              </div>
 
-              {editingTaskId ? (
-                <div className="grid grid-cols-2 gap-2">
-                  <button className="w-full rounded-lg bg-primary py-2 text-sm font-semibold text-white disabled:opacity-60" disabled={busy || !!titleError} onClick={() => saveTask(editingTaskId)} type="button">
-                    {busy ? "Saving..." : "Save Task"}
-                  </button>
-                  <button className="w-full rounded-lg border border-slate-300 py-2 text-sm disabled:opacity-60" disabled={busy} onClick={resetForm} type="button">Cancel</button>
-                </div>
-              ) : (
-                <button className="w-full rounded-lg bg-primary py-2 text-sm font-semibold text-white disabled:opacity-60" disabled={busy || !!titleError} type="submit">
-                  {busy ? "Creating..." : "Create Task"}
-                </button>
-              )}
-            </form> : null}
-          </MobileCard>
+                  {repeatEndType === "on_date" ? (
+                    <div>
+                      <FieldLabel>End Date</FieldLabel>
+                      <input className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none" type="date" disabled={busy} onChange={(e) => setRepeatEndDate(e.target.value)} value={repeatEndDate} />
+                    </div>
+                  ) : null}
+
+                  <div>
+                    <FieldLabel>Notification Channel</FieldLabel>
+                    <select className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none" disabled={busy} onChange={(e) => setNotificationChannel(e.target.value as "off" | "email" | "telegram" | "all")} value={notificationChannel}>
+                      <option value="off">Off</option>
+                      <option value="email">Email</option>
+                      <option value="telegram">Telegram</option>
+                      <option value="all">All</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-3 rounded-xl bg-slate-50 p-3 border border-slate-100">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs font-bold text-slate-700">Subtasks ({subtasks.length})</p>
+                      <button className="text-[11px] font-bold text-primary hover:underline" disabled={busy} onClick={addSubtask} type="button">+ Add</button>
+                    </div>
+
+                    {subtasks.map((st, index) => (
+                      <div className="space-y-2 rounded-lg bg-white p-3 shadow-sm border border-slate-100" key={index}>
+                        <div className="flex justify-between items-start">
+                          <input className="flex-1 rounded-md border-transparent bg-slate-50 px-2 py-1 text-xs font-semibold outline-none focus:bg-white focus:border-slate-200" disabled={busy} onChange={(e) => updateSubtask(index, { title: e.target.value })} placeholder="Subtask title" value={st.title} />
+                          <button className="ml-2 text-[10px] text-rose-500 font-bold" disabled={busy} onClick={() => removeSubtask(index)} type="button">X</button>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <input className="w-full rounded-md border-slate-100 bg-slate-50 px-2 py-1 text-[10px] outline-none" type="datetime-local" disabled={busy} onChange={(e) => updateSubtask(index, { dueAt: e.target.value })} value={st.dueAt} />
+                          <select className="w-full rounded-md border-slate-100 bg-slate-50 px-2 py-1 text-[10px] outline-none" disabled={busy} onChange={(e) => updateSubtask(index, { priority: e.target.value as "low" | "medium" | "high" })} value={st.priority}>
+                            <option value="low">Low</option>
+                            <option value="medium">Med</option>
+                            <option value="high">High</option>
+                          </select>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {editingTaskId ? (
+                    <div className="grid grid-cols-2 gap-3 pt-2">
+                      <button className="w-full rounded-xl bg-primary py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-transform active:scale-95 disabled:opacity-60" disabled={busy || !!titleError} onClick={() => saveTask(editingTaskId)} type="button">
+                        {busy ? "Saving..." : "Save Changes"}
+                      </button>
+                      <button className="w-full rounded-xl border border-slate-200 bg-white py-3 text-sm font-semibold text-slate-600 active:scale-95 disabled:opacity-60" disabled={busy} onClick={resetForm} type="button">Cancel</button>
+                    </div>
+                  ) : (
+                    <button className="w-full rounded-xl bg-primary py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 pt-2 transition-transform active:scale-95 disabled:opacity-60" disabled={busy || !!titleError} type="submit">
+                      {busy ? "Creating..." : "Create Task"}
+                    </button>
+                  )}
+                </form>
+              </div>
+            </MobileCard>
+          </div>
         </div>
       </div>
     </main>

@@ -96,18 +96,20 @@ export default function DashboardPage() {
   return (
     <main>
       <Header title="Dashboard" />
-      <div className="space-y-4 px-4 py-4">
+      <div className="space-y-4 px-4 py-4 md:grid md:grid-cols-2 md:gap-6 md:space-y-0 md:px-8 md:py-8 lg:grid-cols-3">
         {error === "not-auth" ? (
-          <MobileCard>
-            <p className="text-sm">You need to sign in first.</p>
-            <Link className="mt-2 inline-block text-sm font-semibold text-primary" href="/login">
-              Open Login
-            </Link>
-          </MobileCard>
+          <div className="md:col-span-full">
+            <MobileCard>
+              <p className="text-sm">You need to sign in first.</p>
+              <Link className="mt-2 inline-block text-sm font-semibold text-primary" href="/login">
+                Open Login
+              </Link>
+            </MobileCard>
+          </div>
         ) : null}
 
-        {error && error !== "not-auth" ? <p className="text-sm text-red-600">{error}</p> : null}
-        {loading ? <p className="text-sm text-slate-500">Loading dashboard...</p> : null}
+        {error && error !== "not-auth" ? <p className="text-sm text-red-600 md:col-span-full">{error}</p> : null}
+        {loading ? <p className="text-sm text-slate-500 md:col-span-full">Loading dashboard...</p> : null}
 
         <MobileCard>
           <p className="text-sm text-slate-500">Task Progress</p>

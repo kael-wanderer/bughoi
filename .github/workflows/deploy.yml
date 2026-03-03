@@ -28,7 +28,18 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          passphrase: ${{ secrets.VPS_SSH_PASSPHRASE }}
           script: |
-            cd /opt/bug-dinosaurs
-            git pull origin main
+            mkdir -p /opt/bughoi
+            cd /opt/bughoi
+            if [ ! -d ".git" ]; then
+              git init
+              git remote add origin https://github.com/${{ github.repository }}.git
+              git fetch
+              git checkout -f main
+            else
+              git pull origin main
+            fi
             docker compose -f infra/docker-compose.yml up -d --build
+            docker image prune -f

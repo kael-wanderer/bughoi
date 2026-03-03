@@ -399,342 +399,406 @@ export default function ProfilePage() {
   return (
     <main>
       <Header title="Profile" />
-      <div className="space-y-4 px-4 py-4">
+      <div className="space-y-6 px-4 py-4 pb-28 md:grid md:grid-cols-12 md:gap-8 md:space-y-0 md:px-8 md:py-8 md:pb-8">
         {error === "not-auth" ? (
-          <MobileCard>
-            <p className="text-sm">You need to sign in first.</p>
-            <Link className="mt-2 inline-block text-sm font-semibold text-primary" href="/login">
-              Open Login
-            </Link>
-          </MobileCard>
+          <div className="md:col-span-12">
+            <MobileCard>
+              <div className="p-4 text-center">
+                <p className="text-sm font-medium text-slate-800">You need to sign in first.</p>
+                <Link className="mt-4 inline-block px-6 py-2 bg-primary text-white text-sm font-bold rounded-xl shadow-lg shadow-primary/20" href="/login">
+                  Go to Login
+                </Link>
+              </div>
+            </MobileCard>
+          </div>
         ) : null}
 
-        {error && error !== "not-auth" ? <p className="text-sm text-red-600">{error}</p> : null}
-        {success ? <p className="text-sm text-emerald-600">{success}</p> : null}
-        {loading ? <p className="text-sm text-slate-500">Loading profile...</p> : null}
+        {error && error !== "not-auth" ? <div className="md:col-span-12"><p className="text-sm font-bold text-rose-600 bg-rose-50 p-4 rounded-2xl border border-rose-100">{error}</p></div> : null}
+        {success ? <div className="md:col-span-12"><p className="text-sm font-bold text-emerald-600 bg-emerald-50 p-4 rounded-2xl border border-emerald-100">{success}</p></div> : null}
+        {loading ? <div className="md:col-span-12"><p className="text-sm text-slate-500 animate-pulse">Fetching your profile engine...</p></div> : null}
 
-        <MobileCard>
-          <p className="text-sm font-semibold">Theme Color</p>
-          <div className="mt-2 grid grid-cols-3 gap-2 text-xs">
-            {(["orange", "gray", "green"] as const).map((value) => (
+        <div className="md:col-span-12 lg:col-span-5 space-y-6">
+          <MobileCard>
+            <div className="flex items-center gap-4 mb-6">
+              <div className="h-16 w-16 rounded-3xl bg-primary/10 flex items-center justify-center text-primary text-2xl font-black shadow-inner">
+                {me?.displayName?.[0]?.toUpperCase() ?? "U"}
+              </div>
+              <div>
+                <h3 className="text-lg font-black text-slate-900 leading-tight">{me?.displayName ?? "User Account"}</h3>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{me?.roles.join(", ") ?? "Member"}</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Email Address</p>
+                <p className="text-sm font-bold text-slate-700">{me?.email ?? "-"}</p>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-[11px] font-black text-slate-400 uppercase tracking-widest">Time Zone</label>
+                <select
+                  className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white"
+                  onChange={(e) => setTimezone(e.target.value)}
+                  value={timezone}
+                >
+                  {!timezoneOptions.includes(timezone as (typeof timezoneOptions)[number]) ? (
+                    <option value={timezone}>{timezone}</option>
+                  ) : null}
+                  {timezoneOptions.map((tz) => (
+                    <option key={tz} value={tz}>
+                      {tz}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="pt-2">
+                <button className="w-full rounded-2xl bg-primary py-4 text-sm font-black text-white shadow-lg shadow-primary/20 transition-transform active:scale-95" onClick={savePreferences} type="button">
+                  Save Account Updates
+                </button>
+              </div>
+            </div>
+          </MobileCard>
+
+          <MobileCard>
+            <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider mb-4">Visual Theme</h3>
+            <div className="grid grid-cols-3 gap-3">
+              {(["orange", "gray", "green"] as const).map((value) => (
+                <button
+                  key={value}
+                  className={`relative flex flex-col items-center gap-2 rounded-2xl p-4 transition-all ${theme === value
+                      ? "bg-primary/5 ring-2 ring-primary shadow-sm"
+                      : "bg-slate-50 ring-1 ring-slate-100 hover:bg-slate-100"
+                    }`}
+                  onClick={() => chooseTheme(value)}
+                  type="button"
+                >
+                  <div className={`h-8 w-8 rounded-full border-2 border-white shadow-sm ${value === 'orange' ? 'bg-primary' : value === 'gray' ? 'bg-slate-500' : 'bg-emerald-500'
+                    }`} />
+                  <span className={`text-[10px] font-black uppercase tracking-widest ${theme === value ? "text-primary" : "text-slate-500"}`}>{value}</span>
+                  {theme === value && <div className="absolute -top-1.5 -right-1.5 h-5 w-5 bg-primary text-white rounded-full flex items-center justify-center shadow-md"><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7" /></svg></div>}
+                </button>
+              ))}
+            </div>
+          </MobileCard>
+
+          <MobileCard>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider">Security</h3>
               <button
-                key={value}
-                className={`rounded-lg px-2 py-2 ${theme === value ? "bg-primary font-semibold text-white" : "bg-slate-100"}`}
-                onClick={() => chooseTheme(value)}
+                className="text-xs font-black text-primary hover:underline uppercase tracking-widest"
+                onClick={() => setShowPasswordForm((v) => !v)}
                 type="button"
               >
-                {value}
-              </button>
-            ))}
-          </div>
-        </MobileCard>
-
-        <MobileCard>
-          <p className="text-sm font-semibold">Account</p>
-          <div className="mt-3 space-y-2 text-sm text-slate-600">
-            <p>Name: {me?.displayName ?? "-"}</p>
-            <p>Email: {me?.email ?? "-"}</p>
-            <p>Roles: {me?.roles.join(", ") ?? "-"}</p>
-          </div>
-          <label className="mt-3 block text-xs text-slate-600">Time Zone</label>
-          <select
-            className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
-            onChange={(e) => setTimezone(e.target.value)}
-            value={timezone}
-          >
-            {!timezoneOptions.includes(timezone as (typeof timezoneOptions)[number]) ? (
-              <option value={timezone}>{timezone}</option>
-            ) : null}
-            {timezoneOptions.map((tz) => (
-              <option key={tz} value={tz}>
-                {tz}
-              </option>
-            ))}
-          </select>
-          <button className="mt-3 w-full rounded-lg bg-primary py-2 text-sm font-semibold text-white" onClick={savePreferences} type="button">
-            Save Preferences
-          </button>
-          <button
-            className="mt-2 w-full rounded-lg border border-slate-300 py-2 text-sm font-semibold text-slate-700"
-            onClick={() => setShowPasswordForm((v) => !v)}
-            type="button"
-          >
-            {showPasswordForm ? "Hide Change Password" : "Change Password"}
-          </button>
-
-          {showPasswordForm ? (
-            <div className="mt-3 space-y-2">
-              <input
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="Current password"
-                type="password"
-                value={currentPassword}
-              />
-              <input
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
-                onChange={(e) => setNextPassword(e.target.value)}
-                placeholder="New password"
-                type="password"
-                value={nextPassword}
-              />
-              <input
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm new password"
-                type="password"
-                value={confirmPassword}
-              />
-              <button className="w-full rounded-lg bg-primary py-2 text-sm font-semibold text-white" onClick={changeMyPassword} type="button">
-                Update Password
+                {showPasswordForm ? "Close" : "Change Password"}
               </button>
             </div>
-          ) : null}
-        </MobileCard>
 
-        <MobileCard>
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-semibold">Notification Channels</p>
-            <button className="text-xs font-semibold text-primary" onClick={() => setShowNotificationSection((v) => !v)} type="button">
-              {showNotificationSection ? "Collapse" : "Expand"}
-            </button>
-          </div>
-          {showNotificationSection ? <div className="mt-3 space-y-3">
-            <div>
-              <label className="text-xs text-slate-600">Email</label>
-              <input
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
-                onChange={(e) => setEmailAlerts(e.target.value)}
-                placeholder="name@example.com"
-                value={emailAlerts}
-              />
-              <label className="mt-2 flex items-center gap-2 text-xs text-slate-600">
-                <input checked={emailEnabled} onChange={(e) => setEmailEnabled(e.target.checked)} type="checkbox" />
-                Enabled
-              </label>
-            </div>
-
-            <div>
-              <label className="text-xs text-slate-600">Telegram</label>
-              <input
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
-                onChange={(e) => setTelegramAlerts(e.target.value)}
-                placeholder="@your_handle"
-                value={telegramAlerts}
-              />
-              <label className="mt-2 flex items-center gap-2 text-xs text-slate-600">
-                <input checked={telegramEnabled} onChange={(e) => setTelegramEnabled(e.target.checked)} type="checkbox" />
-                Enabled
-              </label>
-            </div>
-
-            <button className="w-full rounded-lg bg-primary py-2 text-sm font-semibold text-white" onClick={saveChannels} type="button">
-              Save Notification Channels
-            </button>
-          </div> : (
-            <button className="mt-3 w-full rounded-lg border border-slate-200 py-2 text-sm font-semibold text-primary" onClick={() => setShowNotificationSection(true)} type="button">
-              Open Notification Settings
-            </button>
-          )}
-        </MobileCard>
-
-        <MobileCard>
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-semibold">Two-Factor Authentication (2FA)</p>
-            <button className="text-xs font-semibold text-primary" onClick={() => setShow2faSection((v) => !v)} type="button">
-              {show2faSection ? "Collapse" : "Expand"}
-            </button>
-          </div>
-          <p className="mt-1 text-xs text-slate-500">Optional: Use Authy to scan QR and protect login.</p>
-          <p className="mt-1 text-xs font-semibold">{me?.twoFactorEnabled ? "Status: Enabled" : "Status: Disabled"}</p>
-
-          {show2faSection ? (!me?.twoFactorEnabled ? (
-            <div className="mt-3 space-y-2">
-              <button className="w-full rounded-lg bg-primary py-2 text-sm font-semibold text-white" onClick={begin2faSetup} type="button">
-                Enable 2FA
-              </button>
-
-              {setup2faUri ? (
-                <div className="rounded-lg border border-slate-200 p-3">
-                  <p className="text-xs text-slate-500">Scan this QR using Authy:</p>
-                  <img
-                    alt="2FA QR"
-                    className="mt-2 h-48 w-48 rounded-md border border-slate-200"
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(setup2faUri)}`}
-                  />
-                  <p className="mt-2 break-all text-[11px] text-slate-500">Secret: {setup2faSecret}</p>
+            {showPasswordForm ? (
+              <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                <div className="space-y-3">
                   <input
-                    className="mt-2 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
-                    onChange={(e) => setSetup2faOtp(e.target.value)}
-                    placeholder="Enter 6-digit code from Authy"
-                    value={setup2faOtp}
-                  />
-                  <button className="mt-2 w-full rounded-lg border border-primary py-2 text-sm font-semibold text-primary" onClick={confirm2faEnable} type="button">
-                    Confirm Enable 2FA
-                  </button>
-                </div>
-              ) : null}
-            </div>
-          ) : (
-            <div className="mt-3 space-y-2">
-              <input
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
-                onChange={(e) => setDisable2faOtp(e.target.value)}
-                placeholder="Enter current 2FA code to disable"
-                value={disable2faOtp}
-              />
-              <button className="w-full rounded-lg border border-rose-300 py-2 text-sm font-semibold text-rose-600" onClick={disable2fa} type="button">
-                Disable 2FA
-              </button>
-            </div>
-          )) : (
-            <button className="mt-3 w-full rounded-lg border border-slate-200 py-2 text-sm font-semibold text-primary" onClick={() => setShow2faSection(true)} type="button">
-              Open 2FA Settings
-            </button>
-          )}
-        </MobileCard>
-
-        {canManageUsers ? (
-          <MobileCard>
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold">Admin User Management</p>
-              <button className="text-xs font-semibold text-primary" onClick={() => setShowAdminSection((v) => !v)} type="button">
-                {showAdminSection ? "Collapse" : "Expand"}
-              </button>
-            </div>
-            <p className="mt-1 text-xs text-slate-500">Only visible for owner/admin roles.</p>
-
-            {showAdminSection ? <div className="mt-3 space-y-3">
-              <div className="rounded-lg border border-slate-200 p-3">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Add User</p>
-                <div className="mt-2 space-y-2">
-                  <input
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
-                    onChange={(e) => setNewUserName(e.target.value)}
-                    placeholder="Display name"
-                    value={newUserName}
-                  />
-                  <input
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
-                    onChange={(e) => setNewUserEmail(e.target.value)}
-                    placeholder="Email"
-                    type="email"
-                    value={newUserEmail}
-                  />
-                  <input
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
-                    onChange={(e) => setNewUserPassword(e.target.value)}
-                    placeholder="Temporary password (min 8 chars)"
+                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white"
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="Current password"
                     type="password"
-                    value={newUserPassword}
+                    value={currentPassword}
                   />
-                  <select
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
-                    onChange={(e) => setNewUserRole(e.target.value as "owner" | "admin" | "member")}
-                    value={newUserRole}
-                  >
-                    <option value="member">user</option>
-                    <option value="admin">admin</option>
-                    <option value="owner">owner</option>
-                  </select>
+                  <input
+                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white"
+                    onChange={(e) => setNextPassword(e.target.value)}
+                    placeholder="New password (8+ chars)"
+                    type="password"
+                    value={nextPassword}
+                  />
+                  <input
+                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white"
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm new password"
+                    type="password"
+                    value={confirmPassword}
+                  />
+                </div>
+                <button className="w-full rounded-2xl bg-slate-900 py-4 text-sm font-black text-white shadow-lg shadow-slate-900/10 transition-transform active:scale-95" onClick={changeMyPassword} type="button">
+                  Confirm Password Change
+                </button>
+              </div>
+            ) : (
+              <p className="text-xs text-slate-400 font-medium">Manage your login credentials and authentication safety.</p>
+            )}
+          </MobileCard>
+
+          <button className="w-full rounded-2xl border-2 border-slate-100 bg-white p-4 text-sm font-black text-rose-500 hover:bg-rose-50 hover:border-rose-100 hover:text-rose-600 transition-all active:scale-95" onClick={logout} type="button">
+            Log Out Account
+          </button>
+        </div>
+
+        <div className="md:col-span-12 lg:col-span-7 space-y-6">
+          <MobileCard>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider">Notification Channels</h3>
+              <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            </div>
+
+            <div className="space-y-6">
+              <div className="rounded-2xl border border-slate-100 bg-slate-50/50 p-5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shadow-sm">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                    </div>
+                    <span className="text-sm font-black text-slate-800">Email Alerts</span>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input checked={emailEnabled} onChange={(e) => setEmailEnabled(e.target.checked)} type="checkbox" className="sr-only peer" />
+                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  </label>
+                </div>
+                <input
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20"
+                  onChange={(e) => setEmailAlerts(e.target.value)}
+                  placeholder="name@example.com"
+                  value={emailAlerts}
+                />
+              </div>
+
+              <div className="rounded-2xl border border-slate-100 bg-slate-50/50 p-5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center shadow-sm">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" /></svg>
+                    </div>
+                    <span className="text-sm font-black text-slate-800">Telegram Bot</span>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input checked={telegramEnabled} onChange={(e) => setTelegramEnabled(e.target.checked)} type="checkbox" className="sr-only peer" />
+                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  </label>
+                </div>
+                <input
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20"
+                  onChange={(e) => setTelegramAlerts(e.target.value)}
+                  placeholder="@your_telegram_handle"
+                  value={telegramAlerts}
+                />
+              </div>
+
+              <button className="w-full rounded-2xl bg-slate-900 py-4 text-sm font-black text-white shadow-lg shadow-slate-900/10 transition-transform active:scale-95" onClick={saveChannels} type="button">
+                Update All Channels
+              </button>
+            </div>
+          </MobileCard>
+
+          <MobileCard>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider">Two-Factor Authentication</h3>
+              <span className={`px-2 py-0.5 text-[9px] font-black rounded uppercase tracking-wider ${me?.twoFactorEnabled ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'}`}>
+                {me?.twoFactorEnabled ? "Secure" : "Vulnerable"}
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 font-medium mb-6">Use Authy or Google Authenticator to protect your account with a secondary dynamic code.</p>
+
+            {!me?.twoFactorEnabled ? (
+              <div className="space-y-4">
+                {setup2faUri ? (
+                  <div className="rounded-3xl border border-slate-100 bg-slate-50 p-6 space-y-4 animate-in fade-in zoom-in-95 duration-500">
+                    <div className="flex flex-col items-center">
+                      <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-4">Scan QR with Authy</p>
+                      <div className="p-4 bg-white rounded-3xl shadow-sm ring-1 ring-slate-100">
+                        <img
+                          alt="2FA QR"
+                          className="h-44 w-44 rounded-xl"
+                          src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(setup2faUri)}`}
+                        />
+                      </div>
+                      <p className="mt-4 break-all text-[10px] font-bold text-slate-400 bg-white px-3 py-1.5 rounded-full ring-1 ring-slate-100">Code: {setup2faSecret}</p>
+                    </div>
+
+                    <div className="pt-4 space-y-3">
+                      <label className="block text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">Verify Verification Code</label>
+                      <input
+                        className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-4 text-center text-xl font-black tracking-[0.5em] outline-none focus:ring-2 focus:ring-primary/20"
+                        onChange={(e) => setSetup2faOtp(e.target.value)}
+                        placeholder="000000"
+                        maxLength={6}
+                        value={setup2faOtp}
+                      />
+                      <button className="w-full rounded-2xl bg-primary py-4 text-sm font-black text-white shadow-lg shadow-primary/20 transition-transform active:scale-95" onClick={confirm2faEnable} type="button">
+                        Confirm & Enable Security
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button className="w-full rounded-2xl border-2 border-primary/20 bg-primary/5 py-4 text-sm font-black text-primary hover:bg-primary/10 transition-all active:scale-95" onClick={begin2faSetup} type="button">
+                    Initialize 2FA Setup
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-emerald-500 text-white flex items-center justify-center">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
+                  </div>
+                  <p className="text-sm font-bold text-emerald-700">Shield Active: Your account is protected by 2FA.</p>
+                </div>
+
+                <div className="pt-2">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Disable 2FA</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      className="flex-1 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white"
+                      onChange={(e) => setDisable2faOtp(e.target.value)}
+                      placeholder="Auth Code"
+                      maxLength={6}
+                      value={disable2faOtp}
+                    />
+                    <button className="px-6 rounded-2xl border border-rose-200 text-rose-500 text-xs font-black hover:bg-rose-50 transition-colors uppercase tracking-widest" onClick={disable2fa} type="button">
+                      Disable
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </MobileCard>
+
+          {canManageUsers && (
+            <MobileCard>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider">Admin Mission Control</h3>
+                <span className="px-2 py-0.5 bg-slate-900 text-white text-[9px] font-black rounded uppercase tracking-wider">Restricted</span>
+              </div>
+
+              <div className="space-y-6">
+                <div className="rounded-3xl border border-slate-100 bg-slate-50 p-6 space-y-4">
+                  <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Provision New Operator</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20"
+                      onChange={(e) => setNewUserName(e.target.value)}
+                      placeholder="Display Name"
+                      value={newUserName}
+                    />
+                    <input
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20"
+                      onChange={(e) => setNewUserEmail(e.target.value)}
+                      placeholder="Email Address"
+                      type="email"
+                      value={newUserEmail}
+                    />
+                    <input
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20"
+                      onChange={(e) => setNewUserPassword(e.target.value)}
+                      placeholder="Temp Password (8+)"
+                      type="password"
+                      value={newUserPassword}
+                    />
+                    <select
+                      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20"
+                      onChange={(e) => setNewUserRole(e.target.value as "owner" | "admin" | "member")}
+                      value={newUserRole}
+                    >
+                      <option value="member">User</option>
+                      <option value="admin">Admin</option>
+                      <option value="owner">Owner</option>
+                    </select>
+                  </div>
                   <button
-                    className="w-full rounded-lg bg-primary py-2 text-sm font-semibold text-white disabled:opacity-60"
+                    className="w-full rounded-2xl bg-slate-900 py-3 text-sm font-black text-white hover:bg-slate-800 transition-colors disabled:opacity-60"
                     disabled={savingAdminUserId === "new"}
                     onClick={createUser}
                     type="button"
                   >
-                    {savingAdminUserId === "new" ? "Adding..." : "Add User"}
+                    {savingAdminUserId === "new" ? "Provisioning..." : "Create New Operator"}
                   </button>
                 </div>
+
+                <div className="space-y-4">
+                  <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">Registry of Operators ({adminUsers.length})</h4>
+                  {loadingAdminUsers ? (
+                    <p className="text-center py-8 text-xs font-bold text-slate-400 animate-pulse">Loading Registry...</p>
+                  ) : adminUsers.length === 0 ? (
+                    <p className="text-center py-8 text-xs font-bold text-slate-400">Registry Empty</p>
+                  ) : (
+                    <div className="grid grid-cols-1 gap-4">
+                      {adminUsers.map((user) => {
+                        const role = user.roles.includes("owner") ? "owner" : user.roles.includes("admin") ? "admin" : "member";
+                        return (
+                          <div className="rounded-3xl border border-slate-100 bg-white p-5 space-y-4 ring-1 ring-slate-200/50 hover:shadow-md transition-shadow" key={user.id}>
+                            <div className="flex items-start justify-between">
+                              <div className="min-w-0">
+                                <p className="text-sm font-black text-slate-900 truncate">{user.displayName}</p>
+                                <p className="text-[11px] font-bold text-slate-400 truncate">{user.email}</p>
+                              </div>
+                              {user.isMasterOwner && <span className="px-2 py-0.5 bg-primary/10 text-primary text-[9px] font-black rounded uppercase">System Root</span>}
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                              <div className="space-y-1">
+                                <p className="text-[9px] font-black text-slate-400 uppercase">Privilege Level</p>
+                                <select
+                                  className="w-full rounded-xl border border-slate-100 bg-slate-50 px-2 py-2 text-xs font-bold outline-none focus:ring-1 focus:ring-primary/20"
+                                  defaultValue={role}
+                                  disabled={savingAdminUserId === user.id || !!user.isMasterOwner}
+                                  onChange={(e) => saveRole(user.id, e.target.value as "owner" | "admin" | "member")}
+                                >
+                                  <option value="owner">Owner</option>
+                                  <option value="admin">Admin</option>
+                                  <option value="member">User</option>
+                                </select>
+                              </div>
+                              <div className="space-y-1">
+                                <p className="text-[9px] font-black text-slate-400 uppercase">Operator Status</p>
+                                <select
+                                  className="w-full rounded-xl border border-slate-100 bg-slate-50 px-2 py-2 text-xs font-bold outline-none focus:ring-1 focus:ring-primary/20 text-slate-700"
+                                  defaultValue={String(user.active)}
+                                  disabled={savingAdminUserId === user.id || !!user.isMasterOwner}
+                                  onChange={(e) => saveStatus(user.id, e.target.value === "true")}
+                                >
+                                  <option value="true">Active</option>
+                                  <option value="false">Inactive</option>
+                                </select>
+                              </div>
+                            </div>
+
+                            <div className="pt-2 border-t border-slate-50 flex gap-2">
+                              <button
+                                className="flex-1 rounded-xl border border-slate-100 bg-slate-50 py-2.5 text-[10px] font-black text-slate-600 hover:bg-slate-100 disabled:opacity-40"
+                                disabled={savingAdminUserId === user.id || !!user.isMasterOwner}
+                                onClick={() => {
+                                  const pass = window.prompt("Enter new temporary password (min 8 chars):");
+                                  if (pass) {
+                                    setPasswordDrafts(p => ({ ...p, [user.id]: pass }));
+                                    // Trigger reset manually for cleaner UI interaction
+                                    setTimeout(() => resetUserPassword(user.id), 100);
+                                  }
+                                }}
+                                type="button"
+                              >
+                                Reset Pass
+                              </button>
+                              <button
+                                className="flex-0 px-4 rounded-xl border border-rose-100 bg-rose-50/30 py-2.5 text-[10px] font-black text-rose-500 hover:bg-rose-50 disabled:opacity-40"
+                                disabled={savingAdminUserId === user.id || !!user.isMasterOwner}
+                                onClick={() => removeUser(user.id)}
+                                type="button"
+                              >
+                                Burn
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               </div>
-
-              {loadingAdminUsers ? <p className="text-sm text-slate-500">Loading users...</p> : null}
-              {!loadingAdminUsers && adminUsers.length === 0 ? <p className="text-sm text-slate-500">No users found.</p> : null}
-
-              {adminUsers.map((user) => {
-                const role = user.roles.includes("owner") ? "owner" : user.roles.includes("admin") ? "admin" : "member";
-                return (
-                  <div className="rounded-lg border border-slate-200 p-3" key={user.id}>
-                    <p className="text-sm font-semibold">{user.displayName}</p>
-                    <p className="mt-1 text-xs text-slate-500">{user.email}</p>
-                    <p className="mt-1 text-xs text-slate-500">Timezone: {user.timezone}</p>
-                    {user.isMasterOwner ? (
-                      <p className="mt-1 text-xs font-semibold text-primary">Master Owner</p>
-                    ) : null}
-
-                    <div className="mt-3 grid grid-cols-2 gap-2">
-                      <select
-                        className="rounded-lg border border-slate-200 px-2 py-2 text-xs"
-                        defaultValue={role}
-                        disabled={savingAdminUserId === user.id || !!user.isMasterOwner}
-                        onChange={(e) => saveRole(user.id, e.target.value as "owner" | "admin" | "member")}
-                      >
-                        <option value="owner">owner</option>
-                        <option value="admin">admin</option>
-                        <option value="member">user</option>
-                      </select>
-
-                      <select
-                        className="rounded-lg border border-slate-200 px-2 py-2 text-xs"
-                        defaultValue={String(user.active)}
-                        disabled={savingAdminUserId === user.id || !!user.isMasterOwner}
-                        onChange={(e) => saveStatus(user.id, e.target.value === "true")}
-                      >
-                        <option value="true">active</option>
-                        <option value="false">inactive</option>
-                      </select>
-                    </div>
-
-                    <div className="mt-2 grid grid-cols-2 gap-2">
-                      <button
-                        className="rounded-lg border border-amber-300 py-2 text-xs font-semibold text-amber-700 disabled:opacity-60"
-                        disabled={savingAdminUserId === user.id || !user.active || !!user.isMasterOwner}
-                        onClick={() => deactivateUser(user.id)}
-                        type="button"
-                      >
-                        Deactivate
-                      </button>
-                      <button
-                        className="rounded-lg border border-rose-300 py-2 text-xs font-semibold text-rose-600 disabled:opacity-60"
-                        disabled={savingAdminUserId === user.id || !!user.isMasterOwner}
-                        onClick={() => removeUser(user.id)}
-                        type="button"
-                      >
-                        Remove
-                      </button>
-                    </div>
-
-                    <div className="mt-2 space-y-2">
-                      <input
-                        className="w-full rounded-lg border border-slate-200 px-2 py-2 text-xs"
-                        onChange={(e) => setPasswordDrafts((prev) => ({ ...prev, [user.id]: e.target.value }))}
-                        placeholder="Set new password (min 8 chars)"
-                        type="password"
-                        value={passwordDrafts[user.id] ?? ""}
-                      />
-                      <button
-                        className="w-full rounded-lg border border-slate-300 py-2 text-xs font-semibold disabled:opacity-60"
-                        disabled={savingAdminUserId === user.id}
-                        onClick={() => resetUserPassword(user.id)}
-                        type="button"
-                      >
-                        Reset Password
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div> : (
-              <button className="mt-3 w-full rounded-lg border border-slate-200 py-2 text-sm font-semibold text-primary" onClick={() => setShowAdminSection(true)} type="button">
-                Open Admin User Management
-              </button>
-            )}
-          </MobileCard>
-        ) : null}
-
-        <button className="w-full rounded-xl border border-slate-300 bg-white p-3 text-sm font-semibold" onClick={logout} type="button">
-          Logout
-        </button>
+            </MobileCard>
+          )}
+        </div>
       </div>
     </main>
   );

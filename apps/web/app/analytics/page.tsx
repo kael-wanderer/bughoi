@@ -235,140 +235,212 @@ export default function AnalyticsPage() {
   return (
     <main>
       <Header title="Analytics" />
-      <div className="space-y-4 px-4 py-4 pb-28">
+      <div className="space-y-6 px-4 py-4 pb-28 md:grid md:grid-cols-12 md:gap-8 md:space-y-0 md:px-8 md:py-8 md:pb-8">
         {error === "not-auth" ? (
-          <MobileCard>
-            <p className="text-sm">You need to sign in first.</p>
-            <Link className="mt-2 inline-block text-sm font-semibold text-primary" href="/login">
-              Open Login
-            </Link>
-          </MobileCard>
+          <div className="md:col-span-12">
+            <MobileCard>
+              <p className="text-sm font-medium text-slate-800">You need to sign in first.</p>
+              <Link className="mt-2 inline-block text-sm font-bold text-primary hover:underline" href="/login">
+                Open Login
+              </Link>
+            </MobileCard>
+          </div>
         ) : null}
 
-        {error && error !== "not-auth" ? <p className="text-sm text-red-600">{error}</p> : null}
-        {loading ? <p className="text-sm text-slate-500">Loading analytics...</p> : null}
+        {error && error !== "not-auth" ? <div className="md:col-span-12"><p className="text-sm font-bold text-rose-600 bg-rose-50 p-3 rounded-xl border border-rose-100">{error}</p></div> : null}
+        {loading ? <div className="md:col-span-12"><p className="text-sm text-slate-500 animate-pulse">Loading analytics engine...</p></div> : null}
 
-        <MobileCard>
-          <div className="space-y-3">
-            <div>
-              <p className="mb-1 text-xs text-slate-500">Select Item</p>
-              <div className="grid grid-cols-2 gap-2 rounded-xl bg-slate-100 p-1 text-xs font-semibold">
-                <button className={`rounded-lg py-2 ${item === "goal" ? "bg-primary text-white" : "text-slate-600"}`} onClick={() => setItem("goal")} type="button">
-                  Goal
-                </button>
-                <button className={`rounded-lg py-2 ${item === "task" ? "bg-primary text-white" : "text-slate-600"}`} onClick={() => setItem("task")} type="button">
-                  Task
-                </button>
+        <div className="md:col-span-5 lg:col-span-4 space-y-6">
+          <div className="sticky top-8 space-y-6">
+            <MobileCard>
+              <div className="space-y-4">
+                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">Analytics Filters</h3>
+
+                <div>
+                  <p className="mb-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest">Select Item</p>
+                  <div className="flex rounded-xl bg-slate-100 p-1 text-xs font-bold ring-1 ring-slate-200/50">
+                    <button className={`flex-1 rounded-lg py-2.5 transition-all ${item === "goal" ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"}`} onClick={() => setItem("goal")} type="button">
+                      Goals
+                    </button>
+                    <button className={`flex-1 rounded-lg py-2.5 transition-all ${item === "task" ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"}`} onClick={() => setItem("task")} type="button">
+                      Tasks
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="mb-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest">Display View</p>
+                  <div className="flex rounded-xl bg-slate-100 p-1 text-xs font-bold ring-1 ring-slate-200/50">
+                    <button className={`flex-1 rounded-lg py-2.5 transition-all ${viewType === "chart" ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"}`} onClick={() => setViewType("chart")} type="button">
+                      Chart
+                    </button>
+                    <button className={`flex-1 rounded-lg py-2.5 transition-all ${viewType === "table" ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"}`} onClick={() => setViewType("table")} type="button">
+                      Table
+                    </button>
+                    <button className={`flex-1 rounded-lg py-2.5 transition-all ${viewType === "both" ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"}`} onClick={() => setViewType("both")} type="button">
+                      Both
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="mb-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest">Time Range</p>
+                  <div className="grid grid-cols-2 gap-2 rounded-xl bg-slate-100 p-1 text-[11px] font-bold ring-1 ring-slate-200/50">
+                    {(["weekly", "monthly", "quarterly", "custom"] as const).map((r) => (
+                      <button
+                        key={r}
+                        className={`rounded-lg py-2.5 transition-all capitalize ${rangeType === r ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                        onClick={() => setRangeType(r)}
+                        type="button"
+                      >
+                        {r}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {rangeType === "custom" ? (
+                  <div className="grid grid-cols-2 gap-2 pt-2">
+                    <div>
+                      <label className="mb-1 block text-[10px] font-bold text-slate-400 uppercase">Start</label>
+                      <input className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white" onChange={(e) => setCustomStart(e.target.value)} type="date" value={customStart} />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-[10px] font-bold text-slate-400 uppercase">End</label>
+                      <input className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white" onChange={(e) => setCustomEnd(e.target.value)} type="date" value={customEnd} />
+                    </div>
+                  </div>
+                ) : null}
               </div>
-            </div>
+            </MobileCard>
 
-            <div>
-              <p className="mb-1 text-xs text-slate-500">Select Type</p>
-              <div className="grid grid-cols-3 gap-2 rounded-xl bg-slate-100 p-1 text-xs font-semibold">
-                <button className={`rounded-lg py-2 ${viewType === "chart" ? "bg-primary text-white" : "text-slate-600"}`} onClick={() => setViewType("chart")} type="button">
-                  Chart
-                </button>
-                <button className={`rounded-lg py-2 ${viewType === "table" ? "bg-primary text-white" : "text-slate-600"}`} onClick={() => setViewType("table")} type="button">
-                  Table
-                </button>
-                <button className={`rounded-lg py-2 ${viewType === "both" ? "bg-primary text-white" : "text-slate-600"}`} onClick={() => setViewType("both")} type="button">
-                  Both
-                </button>
+            <MobileCard>
+              <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4">Performance Summary</h3>
+              <div className="grid grid-cols-1 gap-4">
+                <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100">
+                  <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total {item}s</p>
+                    <p className="text-2xl font-black text-slate-900">{summary.total}</p>
+                  </div>
+                  <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100">
+                  <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Completion</p>
+                    <p className="text-2xl font-black text-emerald-600">{Math.round(summary.completion)}%</p>
+                  </div>
+                  <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" /></svg>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100">
+                  <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{summary.extraLabel}</p>
+                    <p className="text-2xl font-black text-blue-600">{summary.extra}</p>
+                  </div>
+                  <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-blue-100 text-blue-600">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  </div>
+                </div>
               </div>
-            </div>
+            </MobileCard>
+          </div>
+        </div>
 
-            <div>
-              <p className="mb-1 text-xs text-slate-500">Time Range</p>
-              <div className="grid grid-cols-4 gap-2 rounded-xl bg-slate-100 p-1 text-[11px] font-semibold">
-                {(["weekly", "monthly", "quarterly", "custom"] as const).map((r) => (
-                  <button
-                    key={r}
-                    className={`rounded-lg py-2 ${rangeType === r ? "bg-primary text-white" : "text-slate-600"}`}
-                    onClick={() => setRangeType(r)}
-                    type="button"
-                  >
-                    {r}
-                  </button>
+        <div className="md:col-span-7 lg:col-span-8 space-y-6">
+          {(viewType === "chart" || viewType === "both") && (
+            <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm ring-1 ring-slate-200/50">
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-lg font-black text-slate-800 tracking-tight">{item === "goal" ? "Goal Activity Frequency" : "Task Completion Trends"}</h3>
+                <span className="px-3 py-1 bg-slate-100 text-[10px] font-bold text-slate-500 rounded-full uppercase tracking-widest">Live Engine</span>
+              </div>
+              <div className="flex h-56 items-end justify-between gap-1 overflow-x-auto pb-4 px-2">
+                {chartData.map((point, i) => (
+                  <div key={`${point.label}-${i}`} className="flex flex-1 flex-col items-center gap-2 min-w-[32px] group">
+                    <div className="relative w-full flex items-end justify-center h-full">
+                      <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-800 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-lg pointer-events-none z-10">
+                        {point.value}
+                      </div>
+                      <div
+                        className="w-full max-w-[20px] rounded-full bg-gradient-to-t from-primary to-primary/60 transition-all duration-500 group-hover:to-primary/40 group-hover:shadow-lg group-hover:shadow-primary/20"
+                        style={{ height: `${(point.value / maxValue) * 100}%` }}
+                      />
+                    </div>
+                    <p className="text-[10px] font-bold text-slate-400 group-hover:text-primary transition-colors">{point.label}</p>
+                  </div>
                 ))}
               </div>
             </div>
+          )}
 
-            {rangeType === "custom" ? (
-              <div className="grid grid-cols-2 gap-2">
-                <input className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs" onChange={(e) => setCustomStart(e.target.value)} type="date" value={customStart} />
-                <input className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs" onChange={(e) => setCustomEnd(e.target.value)} type="date" value={customEnd} />
+          {(viewType === "table" || viewType === "both") && (
+            <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm ring-1 ring-slate-200/50">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-black text-slate-800 tracking-tight">{item === "goal" ? "Detailed Goal Analytics" : "Detailed Task Analytics"}</h3>
               </div>
-            ) : null}
-          </div>
-        </MobileCard>
-
-        <MobileCard>
-          <p className="text-xs text-slate-500">Summary</p>
-          <div className="mt-2 grid grid-cols-3 gap-2 text-center">
-            <div className="rounded-lg bg-slate-100 p-2">
-              <p className="text-[11px] text-slate-500">Items</p>
-              <p className="text-lg font-bold">{summary.total}</p>
-            </div>
-            <div className="rounded-lg bg-slate-100 p-2">
-              <p className="text-[11px] text-slate-500">Completion</p>
-              <p className="text-lg font-bold">{Math.round(summary.completion)}%</p>
-            </div>
-            <div className="rounded-lg bg-slate-100 p-2">
-              <p className="text-[11px] text-slate-500">{summary.extraLabel}</p>
-              <p className="text-lg font-bold">{summary.extra}</p>
-            </div>
-          </div>
-        </MobileCard>
-
-        {(viewType === "chart" || viewType === "both") && (
-          <MobileCard>
-            <p className="text-sm font-semibold">{item === "goal" ? "Goal Activity Chart" : "Task Completion Chart"}</p>
-            <div className="mt-3 grid h-40 grid-cols-10 items-end gap-2">
-              {chartData.map((point, i) => (
-                <div key={`${point.label}-${i}`} className="flex flex-col items-center gap-1">
-                  <div className="w-5 rounded-t bg-primary/80" style={{ height: `${(point.value / maxValue) * 100}%` }} />
-                  <p className="text-[9px] text-slate-500">{point.label}</p>
-                </div>
-              ))}
-            </div>
-          </MobileCard>
-        )}
-
-        {(viewType === "table" || viewType === "both") && (
-          <MobileCard>
-            <p className="text-sm font-semibold">{item === "goal" ? "Goal Report Table" : "Task Report Table"}</p>
-            <div className="mt-3 space-y-2">
-              {item === "goal" ? (
-                goalRows.length === 0 ? (
-                  <p className="text-xs text-slate-500">No goals in selected range.</p>
-                ) : (
-                  goalRows.map((row) => (
-                    <div className="rounded-lg border border-slate-200 p-3" key={row.id}>
-                      <p className="text-sm font-semibold">{row.title}</p>
-                      <p className="text-xs text-slate-500">
-                        {row.periodType} | {row.checkinCount}/{row.targetValue} {row.unit}
-                      </p>
-                      <p className="mt-1 text-xs text-slate-500">Total mins: {row.totalMins}</p>
-                      <p className="mt-1 text-xs font-semibold text-primary">{Math.round(row.completionPct)}% complete</p>
+              <div className="space-y-4">
+                {item === "goal" ? (
+                  goalRows.length === 0 ? (
+                    <div className="py-12 text-center rounded-2xl bg-slate-50 border-2 border-dashed border-slate-200">
+                      <p className="text-sm font-bold text-slate-400">No goal data found for the current range.</p>
                     </div>
-                  ))
-                )
-              ) : taskRows.length === 0 ? (
-                <p className="text-xs text-slate-500">No tasks in selected range.</p>
-              ) : (
-                taskRows.map((row) => (
-                  <div className="rounded-lg border border-slate-200 p-3" key={row.id}>
-                    <p className="text-sm font-semibold">{row.title}</p>
-                    <p className="text-xs text-slate-500">
-                      {row.category ?? "Task"} | {row.priority} | {row.status}
-                    </p>
-                    <p className="mt-1 text-xs font-semibold text-primary">{row.status === "completed" ? "Completed" : "Pending"}</p>
+                  ) : (
+                    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                      {goalRows.map((row) => (
+                        <div className="rounded-2xl border border-slate-100 bg-slate-50/50 p-4 transition-all hover:bg-white hover:shadow-md hover:ring-1 hover:ring-slate-200/60" key={row.id}>
+                          <p className="text-sm font-black text-slate-800 mb-1">{row.title}</p>
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="px-2 py-0.5 bg-slate-200 text-[9px] font-black text-slate-600 rounded uppercase tracking-wider">{row.periodType}</span>
+                            <span className="text-[11px] font-bold text-slate-500">{row.checkinCount} / {row.targetValue} {row.unit}</span>
+                          </div>
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between text-[11px] font-bold">
+                              <span className="text-slate-400">Progress</span>
+                              <span className="text-primary">{Math.round(row.completionPct)}%</span>
+                            </div>
+                            <div className="h-1.5 w-full rounded-full bg-slate-200 overflow-hidden">
+                              <div className="h-full bg-primary transition-all duration-700" style={{ width: `${row.completionPct}%` }} />
+                            </div>
+                            <p className="text-[10px] font-bold text-slate-400 text-right">Total: {row.totalMins} mins</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                ) : taskRows.length === 0 ? (
+                  <div className="py-12 text-center rounded-2xl bg-slate-50 border-2 border-dashed border-slate-200">
+                    <p className="text-sm font-bold text-slate-400">No task activity recorded in this period.</p>
                   </div>
-                ))
-              )}
+                ) : (
+                  <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                    {taskRows.map((row) => (
+                      <div className="rounded-2xl border border-slate-100 bg-slate-50/50 p-4 transition-all hover:bg-white hover:shadow-md hover:ring-1 hover:ring-slate-200/60 flex items-start justify-between gap-4" key={row.id}>
+                        <div className="min-w-0">
+                          <p className="text-sm font-black text-slate-800 mb-1 truncate">{row.title}</p>
+                          <div className="flex flex-wrap gap-2">
+                            <span className="px-2 py-0.5 bg-slate-200 text-[9px] font-black text-slate-600 rounded uppercase tracking-wider">{row.category ?? "General"}</span>
+                            <span className={`px-2 py-0.5 text-[9px] font-black rounded uppercase tracking-wider ${row.priority === 'high' ? 'bg-rose-100 text-rose-600' :
+                                row.priority === 'medium' ? 'bg-amber-100 text-amber-600' : 'bg-slate-200 text-slate-600'
+                              }`}>{row.priority}</span>
+                          </div>
+                        </div>
+                        <div className="shrink-0">
+                          {row.status === "completed" ? (
+                            <span className="p-1.5 bg-emerald-100 text-emerald-600 rounded-lg flex"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg></span>
+                          ) : (
+                            <span className="p-1.5 bg-slate-200 text-slate-400 rounded-lg flex"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-          </MobileCard>
-        )}
+          )}
+        </div>
       </div>
     </main>
   );

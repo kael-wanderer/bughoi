@@ -296,177 +296,121 @@ export default function GoalsPage() {
   return (
     <main>
       <Header title="My Goals" />
-      <div className="space-y-5 px-4 py-4 pb-32">
-        {error === "not-auth" ? (
-          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-            <p className="text-sm">You need to sign in first.</p>
-            <Link className="mt-2 inline-block text-sm font-semibold text-primary" href="/login">
-              Open Login
-            </Link>
-          </div>
-        ) : null}
+      <div className="space-y-4 px-4 py-4 pb-32 md:grid md:grid-cols-12 md:gap-8 md:space-y-0 md:px-8 md:py-8 md:pb-8">
+        <div className="md:col-span-12 lg:col-span-12 mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="inline-flex h-12 w-full sm:w-80 rounded-xl bg-slate-200/60 p-1 text-sm font-semibold shadow-inner">
+              <button
+                className={`flex-1 rounded-lg transition-all ${period === "weekly" ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                onClick={() => setPeriod("weekly")}
+                type="button"
+              >
+                Weekly
+              </button>
+              <button
+                className={`flex-1 rounded-lg transition-all ${period === "monthly" ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                onClick={() => setPeriod("monthly")}
+                type="button"
+              >
+                Monthly
+              </button>
+              <button
+                className={`flex-1 rounded-lg transition-all ${period === "quarterly" ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                onClick={() => setPeriod("quarterly")}
+                type="button"
+              >
+                Quarterly
+              </button>
+            </div>
 
-        <div className="grid h-12 grid-cols-3 rounded-xl bg-slate-200/60 p-1 text-sm font-semibold">
-          <button
-            className={`rounded-lg ${period === "weekly" ? "bg-white text-primary shadow-sm" : "text-slate-500"}`}
-            onClick={() => setPeriod("weekly")}
-            type="button"
-          >
-            Weekly
-          </button>
-          <button
-            className={`rounded-lg ${period === "monthly" ? "bg-white text-primary shadow-sm" : "text-slate-500"}`}
-            onClick={() => setPeriod("monthly")}
-            type="button"
-          >
-            Monthly
-          </button>
-          <button
-            className={`rounded-lg ${period === "quarterly" ? "bg-white text-primary shadow-sm" : "text-slate-500"}`}
-            onClick={() => setPeriod("quarterly")}
-            type="button"
-          >
-            Quarterly
-          </button>
+            {goals.length > 0 ? (
+              <div className="flex gap-2 sm:w-72">
+                <select
+                  className="flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:ring-2 focus:ring-primary/20"
+                  disabled={busy}
+                  onChange={(e) => setSortBy(e.target.value as "name" | "progress")}
+                  value={sortBy}
+                >
+                  <option value="progress">By progress</option>
+                  <option value="name">By name</option>
+                </select>
+                <select
+                  className="w-24 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:ring-2 focus:ring-primary/20"
+                  disabled={busy}
+                  onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}
+                  value={sortOrder}
+                >
+                  <option value="asc">ASC</option>
+                  <option value="desc">DESC</option>
+                </select>
+              </div>
+            ) : null}
+          </div>
         </div>
 
-        <section className="space-y-3">
+        <div className="md:col-span-7 lg:col-span-8 space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold">{period[0].toUpperCase() + period.slice(1)} Progress</h2>
-            <button className="text-sm font-bold text-primary" disabled={busy} onClick={() => setShowGoalForm((v) => !v)} type="button">
-              {showGoalForm ? "Close" : "Add New"}
+            <h2 className="text-xl font-bold text-slate-800">{period[0].toUpperCase() + period.slice(1)} Progress</h2>
+            <button className="text-sm font-bold text-primary hover:underline lg:hidden" disabled={busy} onClick={() => setShowGoalForm((v) => !v)} type="button">
+              {showGoalForm ? "Close Form" : "Add New"}
             </button>
           </div>
 
-          {showGoalForm ? (
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <form className="space-y-3" onSubmit={createGoal}>
-                <input
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm"
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Goal title"
-                  value={title}
-                  disabled={busy}
-                />
-                {titleError ? <p className="text-xs text-rose-600">{titleError}</p> : null}
-                <input
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm"
-                  onChange={(e) => setCategory(e.target.value)}
-                  placeholder="Category"
-                  value={category}
-                  disabled={busy}
-                />
-                <div className="grid grid-cols-2 gap-2">
-                  <input
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm"
-                    onChange={(e) => setTargetValue(e.target.value)}
-                    placeholder="Target"
-                    type="number"
-                    value={targetValue}
-                    disabled={busy}
-                  />
-                  <input
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm"
-                    onChange={(e) => setUnit(e.target.value)}
-                    placeholder="Unit"
-                    value={unit}
-                    disabled={busy}
-                  />
-                </div>
-                {targetError ? <p className="text-xs text-rose-600">{targetError}</p> : null}
-
-                {editingId ? (
-                  <div className="grid grid-cols-2 gap-2">
-                    <button className="rounded-xl bg-primary py-2 text-sm font-semibold text-white disabled:opacity-60" disabled={busy || !!titleError || !!targetError} onClick={() => saveGoal(editingId)} type="button">
-                      {busy ? "Saving..." : "Save Goal"}
-                    </button>
-                    <button
-                      className="rounded-xl border border-slate-300 py-2 text-sm disabled:opacity-60"
-                      disabled={busy}
-                      onClick={() => {
-                        setEditingId(null);
-                        setShowGoalForm(false);
-                      }}
-                      type="button"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                ) : (
-                  <button className="w-full rounded-xl bg-primary py-3 text-sm font-bold text-white disabled:opacity-60" disabled={busy || !!titleError || !!targetError} type="submit">
-                    {busy ? "Creating..." : "Create Goal"}
-                  </button>
-                )}
-              </form>
+          {error === "not-auth" ? (
+            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+              <p className="text-sm">You need to sign in first.</p>
+              <Link className="mt-2 inline-block text-sm font-semibold text-primary" href="/login">
+                Open Login
+              </Link>
             </div>
           ) : null}
 
           {loading ? <p className="text-sm text-slate-500">Loading goals...</p> : null}
           {success ? <p className="text-sm text-emerald-600">{success}</p> : null}
           {error && error !== "not-auth" ? <p className="text-sm text-rose-600">{error}</p> : null}
-          {!loading && goals.length === 0 ? <p className="text-sm text-slate-500">No goals yet. Add your first goal.</p> : null}
-          {goals.length > 0 ? (
-            <div className="grid grid-cols-2 gap-2">
-              <select
-                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
-                disabled={busy}
-                onChange={(e) => setSortBy(e.target.value as "name" | "progress")}
-                value={sortBy}
-              >
-                <option value="progress">Sort by progress</option>
-                <option value="name">Sort by name</option>
-              </select>
-              <select
-                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
-                disabled={busy}
-                onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}
-                value={sortOrder}
-              >
-                <option value="asc">ASC</option>
-                <option value="desc">DESC</option>
-              </select>
-            </div>
-          ) : null}
+          {!loading && goals.length === 0 ? <p className="text-sm text-slate-500">No goals yet. Add your first goal on the right!</p> : null}
 
-          {pagedGoals.map((goal, idx) => {
-            const completedCount = goal.checkins.length;
-            const totalMins = goal.checkins.reduce((sum, c) => sum + (c.durationMins ?? 0), 0);
-            const progress = goal.targetValue > 0 ? Math.min(100, (completedCount / goal.targetValue) * 100) : 0;
-            return (
-              <div className={`rounded-xl border bg-white p-4 shadow-sm ${selectedGoalId === goal.id ? "border-primary" : "border-slate-200"}`} key={goal.id}>
-                <div className="flex items-start gap-3">
-                  <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${iconStyles[idx % iconStyles.length]}`}>
-                    <span className="text-base font-bold">{goal.title[0]?.toUpperCase() ?? "G"}</span>
-                  </div>
-                  <div className="flex-1">
-                    <div className="mb-1 flex items-start justify-between">
-                      <h3 className="font-bold text-slate-900">{goal.title}</h3>
-                      <span className="text-xs font-bold text-slate-400">{progress.toFixed(0)}%</span>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+            {pagedGoals.map((goal, idx) => {
+              const completedCount = goal.checkins.length;
+              const totalMins = goal.checkins.reduce((sum, c) => sum + (c.durationMins ?? 0), 0);
+              const progress = goal.targetValue > 0 ? Math.min(100, (completedCount / goal.targetValue) * 100) : 0;
+              return (
+                <div className={`rounded-2xl border bg-white p-5 shadow-sm transition-all hover:shadow-md ${selectedGoalId === goal.id ? "border-primary ring-1 ring-primary/10" : "border-slate-100"}`} key={goal.id}>
+                  <div className="flex items-start gap-4">
+                    <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-sm ${iconStyles[idx % iconStyles.length]}`}>
+                      <span className="text-lg font-bold">{goal.title[0]?.toUpperCase() ?? "G"}</span>
                     </div>
-                    <p className="mb-2 text-sm text-slate-500">
-                      {completedCount} of {goal.targetValue} {goal.unit}
-                    </p>
-                    <p className="mb-2 text-xs text-slate-400">Total logged: {totalMins} mins</p>
-                    <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
-                      <div className="h-2 rounded-full bg-primary" style={{ width: `${progress}%` }} />
+                    <div className="flex-1 min-w-0">
+                      <div className="mb-1 flex items-start justify-between gap-2">
+                        <h3 className="font-bold text-slate-800 truncate">{goal.title}</h3>
+                        <span className="text-xs font-black text-primary">{progress.toFixed(0)}%</span>
+                      </div>
+                      <p className="mb-1 text-sm text-slate-600 font-medium">
+                        {completedCount} <span className="text-xs text-slate-400">/</span> {goal.targetValue} <span className="text-xs font-normal text-slate-400 capitalize">{goal.unit}</span>
+                      </p>
+                      <p className="mb-4 text-[11px] text-slate-400 font-medium uppercase tracking-wider">Logged: {totalMins} mins</p>
+                      <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                        <div className="h-2 rounded-full bg-primary transition-all duration-500" style={{ width: `${progress}%` }} />
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  <button className="rounded-lg border border-slate-300 py-2 text-xs font-semibold disabled:opacity-60" disabled={busy} onClick={() => beginEdit(goal)} type="button">
-                    Edit
-                  </button>
-                  <button className="rounded-lg border border-rose-300 py-2 text-xs font-semibold text-rose-600 disabled:opacity-60" disabled={busy} onClick={() => removeGoal(goal.id)} type="button">
-                    Delete
-                  </button>
+                  <div className="mt-5 grid grid-cols-2 gap-3">
+                    <button className="rounded-xl border border-slate-200 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-60" disabled={busy} onClick={() => beginEdit(goal)} type="button">
+                      Edit
+                    </button>
+                    <button className="rounded-xl border border-rose-100 py-2.5 text-xs font-bold text-rose-500 hover:bg-rose-50 transition-colors disabled:opacity-60" disabled={busy} onClick={() => removeGoal(goal.id)} type="button">
+                      Delete
+                    </button>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
 
           {sortedGoals.length > pageSize ? (
-            <div className="flex items-center justify-center gap-2">
+            <div className="flex items-center justify-center gap-2 pt-4">
               <button
                 className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs disabled:opacity-50"
                 disabled={safePage <= 1}
@@ -498,87 +442,162 @@ export default function GoalsPage() {
               </button>
             </div>
           ) : null}
-        </section>
+        </div>
 
-        <section className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold">Quick Check-in</h2>
-            <button className="text-sm font-bold text-primary" onClick={() => setShowQuickCheckin((v) => !v)} type="button">
-              {showQuickCheckin ? "Collapse" : "Open"}
-            </button>
+        <div className="md:col-span-5 lg:col-span-4 space-y-6">
+          <div className="sticky top-8 space-y-6">
+            <section className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold text-slate-800">Quick Check-in</h2>
+                <button className="text-xs font-bold text-primary md:hidden" onClick={() => setShowQuickCheckin((v) => !v)} type="button">
+                  {showQuickCheckin ? "Collapse" : "Open"}
+                </button>
+              </div>
+              <div className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ${!showQuickCheckin ? "hidden md:block" : "block"}`}>
+                <form className="space-y-4" onSubmit={submitCheckin}>
+                  <div>
+                    <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-400">Select Goal</label>
+                    <select
+                      className="w-full rounded-xl border border-slate-100 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white"
+                      disabled={busy || goals.length === 0}
+                      value={checkinGoalId}
+                      onChange={(e) => setCheckinGoalId(e.target.value)}
+                    >
+                      {goals.map((g) => (
+                        <option key={g.id} value={g.id}>
+                          {g.title}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-400">Date</label>
+                      <input
+                        className="w-full rounded-xl border border-slate-100 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white"
+                        type="date"
+                        disabled={busy}
+                        value={checkinDate}
+                        min={minCheckinDate}
+                        max={maxCheckinDate}
+                        onChange={(e) => setCheckinDate(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-400">Duration (Mins)</label>
+                      <input
+                        className="w-full rounded-xl border border-slate-100 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white"
+                        type="number"
+                        placeholder="e.g. 60"
+                        disabled={busy}
+                        value={checkinMins}
+                        onChange={(e) => setCheckinMins(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  {checkinError && checkinMins ? <p className="text-[10px] text-rose-500 font-bold">{checkinError}</p> : null}
+
+                  <div>
+                    <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-400">Notes (Optional)</label>
+                    <textarea
+                      className="w-full rounded-xl border border-slate-100 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white"
+                      rows={2}
+                      placeholder="What did you achieve?"
+                      disabled={busy}
+                      value={checkinNote}
+                      onChange={(e) => setCheckinNote(e.target.value)}
+                    />
+                  </div>
+
+                  <button className="w-full rounded-xl bg-primary py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-transform active:scale-95 disabled:opacity-60" disabled={busy || !checkinGoalId || !!checkinError} type="submit">
+                    {busy ? "Saving..." : "Log Activity"}
+                  </button>
+                </form>
+              </div>
+            </section>
+
+            <section className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold text-slate-800">{editingId ? "Edit Goal" : "New Goal"}</h2>
+              </div>
+              <div className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all ${!showGoalForm && !editingId ? "opacity-40 grayscale pointer-events-none md:opacity-100 md:grayscale-0 md:pointer-events-auto" : "opacity-100"}`}>
+                <form className="space-y-4" onSubmit={createGoal}>
+                  <div>
+                    <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-400">Goal Title</label>
+                    <input
+                      className="w-full rounded-xl border border-slate-100 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white"
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="e.g. Daily Exercise"
+                      value={title}
+                      disabled={busy}
+                    />
+                    {titleError ? <p className="mt-1 text-[10px] text-rose-500 font-bold">{titleError}</p> : null}
+                  </div>
+
+                  <div>
+                    <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-400">Category</label>
+                    <input
+                      className="w-full rounded-xl border border-slate-100 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white"
+                      onChange={(e) => setCategory(e.target.value)}
+                      placeholder="e.g. Health"
+                      value={category}
+                      disabled={busy}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-400">Target Value</label>
+                      <input
+                        className="w-full rounded-xl border border-slate-100 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white"
+                        onChange={(e) => setTargetValue(e.target.value)}
+                        placeholder="e.g. 5"
+                        type="number"
+                        value={targetValue}
+                        disabled={busy}
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-400">Unit</label>
+                      <input
+                        className="w-full rounded-xl border border-slate-100 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white"
+                        onChange={(e) => setUnit(e.target.value)}
+                        placeholder="e.g. times"
+                        value={unit}
+                        disabled={busy}
+                      />
+                    </div>
+                  </div>
+                  {targetError ? <p className="text-[10px] text-rose-500 font-bold">{targetError}</p> : null}
+
+                  {editingId ? (
+                    <div className="grid grid-cols-2 gap-3 pt-2">
+                      <button className="rounded-xl bg-primary py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 disabled:opacity-60" disabled={busy || !!titleError || !!targetError} onClick={() => saveGoal(editingId)} type="button">
+                        {busy ? "Saving..." : "Save Goal"}
+                      </button>
+                      <button
+                        className="rounded-xl border border-slate-200 py-3 text-sm font-semibold text-slate-600 active:scale-95 disabled:opacity-60"
+                        disabled={busy}
+                        onClick={() => {
+                          setEditingId(null);
+                          setShowGoalForm(false);
+                        }}
+                        type="button"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <button className="w-full rounded-xl bg-primary py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 pt-2 transition-transform active:scale-95 disabled:opacity-60" disabled={busy || !!titleError || !!targetError} type="submit">
+                      {busy ? "Creating..." : "Create Goal"}
+                    </button>
+                  )}
+                </form>
+              </div>
+            </section>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            {!showQuickCheckin ? (
-              <button
-                className="w-full rounded-xl bg-primary py-3 text-sm font-bold text-white disabled:opacity-60"
-                disabled={busy || goals.length === 0}
-                onClick={() => setShowQuickCheckin(true)}
-                type="button"
-              >
-                Log Activity
-              </button>
-            ) : <form className="space-y-4" onSubmit={submitCheckin}>
-              <div>
-                <label className="mb-1.5 block text-sm font-semibold text-slate-600">Select Goal</label>
-                <select
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm"
-                  disabled={busy || goals.length === 0}
-                  value={checkinGoalId}
-                  onChange={(e) => setCheckinGoalId(e.target.value)}
-                >
-                  {goals.map((g) => (
-                    <option key={g.id} value={g.id}>
-                      {g.title}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-600">Date</label>
-                  <input
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm"
-                    type="date"
-                    disabled={busy}
-                    value={checkinDate}
-                    min={minCheckinDate}
-                    max={maxCheckinDate}
-                    onChange={(e) => setCheckinDate(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-600">Mins</label>
-                  <input
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm"
-                    type="number"
-                    placeholder="e.g. 60"
-                    disabled={busy}
-                    value={checkinMins}
-                    onChange={(e) => setCheckinMins(e.target.value)}
-                  />
-                </div>
-              </div>
-              {checkinError && checkinMins ? <p className="text-xs text-rose-600">{checkinError}</p> : null}
-
-              <div>
-                <label className="mb-1.5 block text-sm font-semibold text-slate-600">Notes</label>
-                <textarea
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm"
-                  rows={3}
-                  placeholder="Optional notes"
-                  disabled={busy}
-                  value={checkinNote}
-                  onChange={(e) => setCheckinNote(e.target.value)}
-                />
-              </div>
-
-              <button className="w-full rounded-xl bg-primary py-3 text-sm font-bold text-white disabled:opacity-60" disabled={busy || !checkinGoalId || !!checkinError} type="submit">
-                {busy ? "Saving..." : "Log Activity"}
-              </button>
-            </form>}
-          </div>
-        </section>
+        </div>
       </div>
     </main>
   );
