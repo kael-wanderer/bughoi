@@ -41,5 +41,5 @@ jobs:
             else
               git pull origin main
             fi
-            docker compose -f infra/docker-compose.yml up -d --build
+            docker compose -f infra/docker-compose.yml --env-file .env up -d --build
             docker image prune -f
