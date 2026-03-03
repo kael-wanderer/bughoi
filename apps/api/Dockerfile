@@ -9,7 +9,9 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run build -w @bug/shared && npm run build -w @bug/api
+RUN npm run prisma:generate -w @bug/api \
+  && npm run build -w @bug/shared \
+  && npm run build -w @bug/api
 
 FROM node:22-alpine AS runner
 WORKDIR /app

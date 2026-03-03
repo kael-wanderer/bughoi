@@ -21,4 +21,4 @@ COPY --from=builder /app/apps/web/package.json ./apps/web/package.json
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
 COPY --from=builder /app/packages/shared/package.json ./packages/shared/package.json
 EXPOSE 3000
-CMD ["npm", "run", "start", "-w", "@bug/web"]
+CMD ["node_modules/.bin/next", "start", "apps/web", "-H", "0.0.0.0", "-p", "3000"]
