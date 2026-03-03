@@ -68,31 +68,31 @@ export default function LoginPage() {
           </div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight">Welcome Back</h1>
           <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">
-            {mfaToken ? "Security Verification" : "Agent Authentication"}
+            {mfaToken ? "Two-Factor Verification" : "Sign in to your account"}
           </p>
         </div>
 
         <form className="space-y-6 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/50" onSubmit={onSubmit}>
           <p className="text-xs font-medium text-slate-500 text-center leading-relaxed">
-            {mfaToken ? "Enter the 6-digit synchronization code from your authenticator app." : "Access the command center with your encrypted credentials."}
+            {mfaToken ? "Enter the 6-digit code from your authenticator app." : "Use your email and password to continue."}
           </p>
 
           <div className="space-y-4">
             {!mfaToken ? (
               <>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Mission Email</label>
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email</label>
                   <input
                     className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-sm font-bold outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all shadow-sm"
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="agent@bughoi.net"
+                    placeholder="you@example.com"
                     type="email"
                     value={email}
                     required
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Access Phrase</label>
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Password</label>
                   <input
                     className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-sm font-bold outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all shadow-sm"
                     onChange={(e) => setPassword(e.target.value)}
@@ -124,7 +124,7 @@ export default function LoginPage() {
                   }}
                   type="button"
                 >
-                  Return to Phrase Login
+                  Back to Login
                 </button>
               </div>
             )}
@@ -145,15 +145,15 @@ export default function LoginPage() {
               {loading ? (
                 <>
                   <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                  Initializing...
+                  Signing in...
                 </>
-              ) : mfaToken ? "Authorize Access" : "Establish Connection"}
+              ) : mfaToken ? "Verify Code" : "Sign In"}
             </span>
           </button>
         </form>
 
         <p className="text-center text-[10px] font-bold text-slate-300 uppercase tracking-widest">
-          Level 5 Security Clearance Required
+          Secure access only
         </p>
       </div>
     </main>
