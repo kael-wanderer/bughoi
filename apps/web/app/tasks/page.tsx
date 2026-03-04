@@ -35,7 +35,7 @@ type Task = {
 
 type SubtaskDraft = {
   title: string;
-  category: "Project" | "Once Time" | "Weekly" | "Monthly" | "Customer";
+  category: "Project" | "Once Time" | "Weekly" | "Monthly" | "Customer" | "Housework";
   description: string;
   dueAt: string;
   priority: "low" | "medium" | "high";
@@ -49,7 +49,7 @@ type SubtaskDraft = {
   notificationChannel: "off" | "email" | "telegram" | "all";
 };
 
-const categoryOptions = ["Project", "Once Time", "Weekly", "Monthly", "Customer"] as const;
+const categoryOptions = ["Project", "Once Time", "Weekly", "Monthly", "Customer", "Housework"] as const;
 const reminderOptions = [
   { value: "none", label: "None" },
   { value: "1_day_before", label: "1 day before" },

@@ -207,14 +207,6 @@ export default function DashboardPage() {
           </div>
         </MobileCard>
 
-        <MobileCard>
-          <p className="text-sm font-semibold">Pending</p>
-          <ul className="mt-2 list-disc pl-5 text-sm text-slate-600">
-            <li>Create your weekly goals</li>
-            <li>Add reminders for important tasks</li>
-            <li>Configure notification channels in Profile</li>
-          </ul>
-        </MobileCard>
       </div>
     </main>
   );

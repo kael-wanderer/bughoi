@@ -37,7 +37,7 @@ export function Sidebar() {
         })}
       </nav>
       <div className="p-4 border-t border-slate-100">
-        <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Version 1.0.0</p>
+        <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Version 1.1.0</p>
       </div>
     </aside>
   );
