@@ -20,3 +20,11 @@ Monorepo with mobile-first web app, REST API, PostgreSQL schema, and infra for D
 
 ## Web base
 - `http://localhost:9000`
+
+## Production notes
+- Keep `/opt/bughoi/.env` on VPS. The deploy workflow requires it and will fail fast if missing.
+- Deploy pipeline now runs `prisma db push` automatically before starting API/Web, so missing tables do not break startup.
+- Recommended Caddy routing on one domain:
+  - `bughoi.your-domain.com` -> `bughoi-web:3000`
+  - `bughoi.your-domain.com/api/*` -> `bughoi-api:4000`
+- Set `NEXT_PUBLIC_API_URL=https://bughoi.your-domain.com/api` in VPS `.env`.

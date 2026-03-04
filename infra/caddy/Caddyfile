@@ -1,7 +1,7 @@
-app.example.com {
-  reverse_proxy web:3000
-}
+bughoi.example.com {
+  handle_path /api/* {
+    reverse_proxy api:4000
+  }
 
-api.example.com {
-  reverse_proxy api:4000
+  reverse_proxy web:3000
 }

@@ -34,7 +34,7 @@ function getApiUrl(): string {
     return process.env.NEXT_PUBLIC_API_URL;
   }
   if (typeof window !== "undefined") {
-    return `${window.location.protocol}//${window.location.hostname}:9001`;
+    return `${window.location.origin}/api`;
   }
   return "http://localhost:9001";
 }

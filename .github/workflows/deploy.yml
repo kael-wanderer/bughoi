@@ -41,5 +41,11 @@ jobs:
             else
               git pull origin main
             fi
-            docker compose -f infra/docker-compose.yml --env-file .env up -d --build
+            if [ ! -f ".env" ]; then
+              echo "Missing /opt/bughoi/.env"
+              exit 1
+            fi
+            docker compose -f infra/docker-compose.yml --env-file .env up -d --build postgres
+            docker compose -f infra/docker-compose.yml --env-file .env run --rm --build api npx prisma db push --schema apps/api/prisma/schema.prisma
+            docker compose -f infra/docker-compose.yml --env-file .env up -d --build --force-recreate api web
             docker image prune -f
