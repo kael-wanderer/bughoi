@@ -8,7 +8,7 @@ export type TaskStatus = z.infer<typeof taskStatusSchema>;
 
 export const taskPrioritySchema = z.enum(["low", "medium", "high"]);
 export type TaskPriority = z.infer<typeof taskPrioritySchema>;
-export const taskCategorySchema = z.enum(["Project", "Once Time", "Weekly", "Monthly", "Customer"]);
+export const taskCategorySchema = z.enum(["Project", "Once Time", "Weekly", "Monthly", "Customer", "Housework"]);
 export const reminderPresetSchema = z.enum([
   "none",
   "1_day_before",
