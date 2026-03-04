@@ -43,7 +43,12 @@ export async function dashboardRoutes(app: FastifyInstance) {
       prisma.task.count({ where: { userId, status: "completed" } }),
       prisma.task.count({ where: { userId, status: "active", dueAt: { lt: new Date() } } }),
       prisma.task.findMany({
-        where: { userId, parentTaskId: null },
+        where: { userId },
+        include: {
+          parentTask: {
+            select: { id: true, title: true }
+          }
+        },
         orderBy: { createdAt: "desc" }
       }),
       prisma.goal.findMany({
@@ -83,8 +88,8 @@ export async function dashboardRoutes(app: FastifyInstance) {
             return pivot >= bounds.start && pivot <= bounds.end;
           })
           .map((task: any) => ({
-            taskId: task.id,
-            title: task.title,
+            taskId: task.parentTask?.id ?? task.id,
+            title: task.parentTask ? `${task.parentTask.title} / ${task.title}` : task.title,
             status: task.status,
             priority: task.priority,
             dueAt: task.dueAt
