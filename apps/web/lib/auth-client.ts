@@ -8,11 +8,44 @@ export type AuthUser = {
   displayName: string;
 };
 
+function decodeJwtPayload(token: string): { exp?: number } | null {
+  const parts = token.split(".");
+  if (parts.length < 2) {
+    return null;
+  }
+
+  try {
+    const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, "=");
+    const json = atob(padded);
+    return JSON.parse(json) as { exp?: number };
+  } catch {
+    return null;
+  }
+}
+
+function isExpired(token: string): boolean {
+  const payload = decodeJwtPayload(token);
+  if (!payload?.exp) {
+    return true;
+  }
+  const nowSec = Math.floor(Date.now() / 1000);
+  return payload.exp <= nowSec;
+}
+
 export function getToken(): string | null {
   if (typeof window === "undefined") {
     return null;
   }
-  return window.localStorage.getItem(TOKEN_KEY);
+  const token = window.localStorage.getItem(TOKEN_KEY);
+  if (!token) {
+    return null;
+  }
+  if (isExpired(token)) {
+    window.localStorage.removeItem(TOKEN_KEY);
+    return null;
+  }
+  return token;
 }
 
 export function setToken(token: string): void {
@@ -27,6 +60,15 @@ export function clearToken(): void {
     return;
   }
   window.localStorage.removeItem(TOKEN_KEY);
+}
+
+function redirectToLogin(): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+  if (window.location.pathname !== "/login") {
+    window.location.replace("/login");
+  }
 }
 
 function getApiUrl(): string {
@@ -52,6 +94,7 @@ async function toErrorMessage(response: Response): Promise<string> {
 export async function authedFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const token = getToken();
   if (!token) {
+    redirectToLogin();
     throw new Error("Not authenticated");
   }
 
@@ -67,6 +110,11 @@ export async function authedFetch<T>(path: string, init?: RequestInit): Promise<
   });
 
   if (!response.ok) {
+    if (response.status === 401) {
+      clearToken();
+      redirectToLogin();
+      throw new Error("Session expired. Please sign in again.");
+    }
     throw new Error(await toErrorMessage(response));
   }
 

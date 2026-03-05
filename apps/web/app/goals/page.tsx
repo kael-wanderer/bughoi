@@ -265,7 +265,8 @@ export default function GoalsPage() {
         body: JSON.stringify({
           durationMins: checkinMinsNum,
           note: checkinNote.trim() || undefined,
-          checkinDate: new Date(`${checkinDate}T00:00:00`).toISOString()
+          // Send noon UTC for the selected date to avoid timezone boundary drift (e.g. Monday becoming Sunday UTC).
+          checkinDate: `${checkinDate}T12:00:00.000Z`
         })
       });
       setSuccess("Check-in logged");
