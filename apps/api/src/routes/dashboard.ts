@@ -33,6 +33,11 @@ function taskPivotDate(task: { completedAt: Date | null; dueAt: Date | null; cre
   return task.completedAt ?? task.dueAt ?? task.createdAt;
 }
 
+function countGoalCheckinsInCurrentPeriod(goal: { periodType: "weekly" | "monthly" | "quarterly"; checkins: Array<{ checkinDate: Date }> }): number {
+  const bounds = periodBounds(goal.periodType);
+  return goal.checkins.filter((checkin) => checkin.checkinDate >= bounds.start && checkin.checkinDate <= bounds.end).length;
+}
+
 export async function dashboardRoutes(app: FastifyInstance) {
   app.get("/dashboard/summary", { preHandler: [app.authenticate] }, async (request) => {
     const userId = getAuthUser(request).userId;
@@ -62,7 +67,7 @@ export async function dashboardRoutes(app: FastifyInstance) {
     ]);
 
     const goalProgress = goals.map((goal: any) => {
-      const total = goal.checkins.length;
+      const total = countGoalCheckinsInCurrentPeriod(goal);
       const progress = goal.targetValue > 0 ? Math.min(100, (total / goal.targetValue) * 100) : 0;
       return {
         goalId: goal.id,
@@ -126,7 +131,7 @@ export async function dashboardRoutes(app: FastifyInstance) {
       (acc, period) => {
         const periodGoals = allGoals.filter((g: any) => g.periodType === period);
         const items = periodGoals.map((goal: any) => {
-          const completedCount = goal.checkins.length;
+          const completedCount = countGoalCheckinsInCurrentPeriod(goal);
           const progress = goal.targetValue > 0 ? Math.min(100, (completedCount / goal.targetValue) * 100) : 0;
           return {
             goalId: goal.id,

@@ -11,7 +11,7 @@ type Goal = {
   category: string;
   targetValue: number;
   unit: string;
-  checkins: Array<{ value: number; durationMins?: number | null }>;
+  checkins: Array<{ value: number; durationMins?: number | null; checkinDate: string }>;
 };
 
 type Period = "weekly" | "monthly" | "quarterly";
@@ -41,6 +41,14 @@ function startEndByPeriod(period: Period): { start: Date; end: Date } {
   const start = new Date(now.getFullYear(), quarter * 3, 1);
   const end = new Date(now.getFullYear(), quarter * 3 + 3, 0, 23, 59, 59, 999);
   return { start, end };
+}
+
+function checkinsInCurrentPeriod(checkins: Goal["checkins"], period: Period): Goal["checkins"] {
+  const { start, end } = startEndByPeriod(period);
+  return checkins.filter((checkin) => {
+    const date = new Date(checkin.checkinDate);
+    return date >= start && date <= end;
+  });
 }
 
 const iconStyles = [
@@ -141,8 +149,8 @@ export default function GoalsPage() {
       return;
     }
     const sorted = [...goals].sort((a, b) => {
-      const progressA = a.targetValue > 0 ? a.checkins.length / a.targetValue : 0;
-      const progressB = b.targetValue > 0 ? b.checkins.length / b.targetValue : 0;
+      const progressA = a.targetValue > 0 ? checkinsInCurrentPeriod(a.checkins, period).length / a.targetValue : 0;
+      const progressB = b.targetValue > 0 ? checkinsInCurrentPeriod(b.checkins, period).length / b.targetValue : 0;
 
       if (sortBy === "name") {
         const cmp = a.title.localeCompare(b.title);
@@ -156,7 +164,7 @@ export default function GoalsPage() {
     if (idx >= 0) {
       setPage(Math.floor(idx / pageSize) + 1);
     }
-  }, [goals, selectedGoalId, sortBy, sortOrder]);
+  }, [goals, selectedGoalId, sortBy, sortOrder, period]);
 
   async function createGoal(event: FormEvent) {
     event.preventDefault();
@@ -273,8 +281,8 @@ export default function GoalsPage() {
 
   const sortedGoals = useMemo(() => {
     return [...goals].sort((a, b) => {
-      const progressA = a.targetValue > 0 ? a.checkins.length / a.targetValue : 0;
-      const progressB = b.targetValue > 0 ? b.checkins.length / b.targetValue : 0;
+      const progressA = a.targetValue > 0 ? checkinsInCurrentPeriod(a.checkins, period).length / a.targetValue : 0;
+      const progressB = b.targetValue > 0 ? checkinsInCurrentPeriod(b.checkins, period).length / b.targetValue : 0;
 
       if (sortBy === "name") {
         const cmp = a.title.localeCompare(b.title);
@@ -284,7 +292,7 @@ export default function GoalsPage() {
       const cmp = progressA - progressB;
       return sortOrder === "asc" ? cmp : -cmp;
     });
-  }, [goals, sortBy, sortOrder]);
+  }, [goals, sortBy, sortOrder, period]);
 
   const totalPages = Math.max(1, Math.ceil(sortedGoals.length / pageSize));
   const safePage = Math.min(page, totalPages);
@@ -372,8 +380,9 @@ export default function GoalsPage() {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
             {pagedGoals.map((goal, idx) => {
-              const completedCount = goal.checkins.length;
-              const totalMins = goal.checkins.reduce((sum, c) => sum + (c.durationMins ?? 0), 0);
+              const activeCheckins = checkinsInCurrentPeriod(goal.checkins, period);
+              const completedCount = activeCheckins.length;
+              const totalMins = activeCheckins.reduce((sum, c) => sum + (c.durationMins ?? 0), 0);
               const progress = goal.targetValue > 0 ? Math.min(100, (completedCount / goal.targetValue) * 100) : 0;
               return (
                 <div className={`rounded-2xl border bg-white p-5 shadow-sm transition-all hover:shadow-md ${selectedGoalId === goal.id ? "border-primary ring-1 ring-primary/10" : "border-slate-100"}`} key={goal.id}>
